@@ -1,3 +1,4 @@
 [submodule "ssh"]
 	path = ssh
 	url = https://github.com/zbeekman/ssh-config
+	ignore = untracked
