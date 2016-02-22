@@ -1,0 +1,37 @@
+*.docx diff=word
+*.pdf diff=pdf
+*.ps diff=ps
+*.png diff=exif
+*.jpg diff=exif
+*.jpeg diff=exif
+*.tex diff=tex
+*.bib diff=bibtex
+*.f90 diff=fortran
+*.F90 diff=fortran
+*.c diff=cpp
+*.cpp diff=cpp
+*.py diff=python
+*.m diff=matlab
+*.rb diff=ruby
+*.htm diff=html
+*.html diff=html
+*.pl diff=perl
+
+# Try git hooks instead, or seed .git/info/attributes with these instead
+# *.tex filter=fix-eol-eof diff=tex
+# *.bib filter=fix-eol-eof diff=bibtex
+# *.f90 filter=fix-eol-eof diff=fortran
+# *.F90 filter=fix-eol-eof diff=fortran
+# *.c filter=fix-eol-eof diff=cpp
+# *.cpp filter=fix-eol-eof diff=cpp
+# *.py filter=fix-eol-eof diff=python
+# *.m filter=fix-eol-eof diff=matlab
+# *.rb filter=fix-eol-eof diff=ruby
+# *.htm filter=fix-eol-eof diff=html
+# *.html filter=fix-eol-eof diff=html
+# *.pl filter=fix-eol-eof diff=perl
+# *.txt filter=fix-eol-eof
+# *.cmake filter=fix-eol-eof
+# *.sh filter=fix-eol-eof
+# makefile filter=fix-eol-eof
+# Makefile filter=fix-eol-eof

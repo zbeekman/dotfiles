@@ -1,0 +1,133 @@
+[user]
+	name = Izaak Beekman
+	email = zbeekman@gmail.com
+	signingkey = 92A64702
+	logallrefupdates = true
+[credential]
+	helper = osxkeychain
+[core]
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
+	editor = emacs -nw --no-splash -q -l ~/.gitsettings/util/git-commit-message.el
+	whitespace = trailing-space,space-before-tab,blank-at-eol,blank-at-eof
+	attributesfile = ~/.gitattributes_global
+[color]
+	ui = true
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+[alias]
+	st = status
+	ci = commit
+	br = branch
+	co = checkout
+	df = diff
+	dc = diff --cached
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an> %G?%Creset' --abbrev-commit
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	ls = ls-files
+
+	# Show files ignored by git:
+	ign = ls-files -o -i --exclude-standard
+	unstage = reset HEAD --
+	last = log --show-notes=* -1 HEAD
+	pushNotes = push origin refs/notes/*
+	stash-rename = "!_() { rev=$(git rev-parse $1) && git stash drop $1 || exit 1 ; git diff-index --quiet HEAD; s=$?; [ $s != 0 ] && git stash save \"tmp stash from stash-rename\"; git stash apply $rev && shift && git stash save \"$@\" && [ $s != 0 ] && git stash pop stash@{1}; }; _"
+	reup = pull --rebase
+	pop = stash pop --index
+	save = stash save --keep-index
+	brs = branch -avvv
+[branch]
+	autosetupmerge = true
+[gui]
+	warndetachedcommit = true
+
+[merge]
+	tool = ediff
+	conflictStyle = diff3
+
+[mergetool "ediff"]
+	cmd = ~/ediff.sh $LOCAL $REMOTE $MERGED $BASE
+	trustExitCode = true
+[filter "media"]
+	required = true
+	clean = git media clean %f
+	smudge = git media smudge %f
+[difftool "sourcetree"]
+	cmd = /Applications/kdiff3.app/Contents/MacOS/kdiff3 \"$LOCAL\" \"$REMOTE\"
+	path =
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[push]
+	default = current
+[diff]
+	renames = copies
+	mnemonicprefix = true
+	mnemomicprefix = true
+	tool = ediff
+	guitool = ediff
+	submodule = log
+
+[difftool "ediff"]
+	cmd = ~/ediff.sh $LOCAL $REMOTE $MERGED
+
+
+# Where did this come from and what does it do?!?!?
+[filter "hawser"]
+	clean = git hawser clean %f
+	smudge = git hawser smudge %f
+	required = true
+[rerere]
+	enabled = true
+[notes]
+	displayRef = refs/notes/*
+[status]
+	submodulesummary = 1
+[diff "word"]
+	textconv = docx2txt
+	cachetextconv = true
+[diff "exif"]
+	textconv = exiftool
+	cachetextconv = true
+[diff "pdf"]
+	textconv = pdf2txt
+	cachetextconv = true
+[diff "ps"]
+      textconv = ps2ascii
+      cachetextconv = true
+[filter "fix-eol-eof"]
+	clean = fixup-eol-eof %f
+	smudge = cat
+	required = true
+[filter "trimWhitespace"]
+	clean = git-stripspace
+	smudge = cat
+	required = true
+[init]
+	templatedir = ~/.gitsettings/gittemplates_global
+
+[include]
+	path = ~/.secrets/github_auth
+[filter "lfs"]
+	clean = git lfs clean %f
+	smudge = git lfs smudge %f
+	required = true
+[gitopen "gitlab"]
+	domain = gitlab.umiacs.umd.edu
+[rebase]
+	autosquash = true
+[apply]
+	whitespace = fix
