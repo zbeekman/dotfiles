@@ -13,9 +13,9 @@
 #   your own risk.
 # License: See below
 
-xcode-select -p &> /dev/null
-if [[ "$?" !=  "0" && ! -f "/Developer/Library/uninstall-devtools" ]]; then
-  read -p "Please install Xcode and re-run this script"
+
+if ! xcode-select -p &> /dev/null && [[ ! -f "/Developer/Library/uninstall-devtools" ]]; then
+  read -r -p "Please install Xcode and re-run this script"
   exit 0
 fi
 
@@ -29,7 +29,7 @@ if [ -n "$WORKSPACE_DIR" ]; then
 else
   DEFAULT_WORKING_DIRECTORY=$HOME/Sandbox
   echo "Please enter your local working directory (or hit Return to stick with '$DEFAULT_WORKING_DIRECTORY')"
-  read working_dir
+  read -r working_dir
 fi
 
 if [ -n "$working_dir" ]; then
@@ -39,10 +39,10 @@ else
 fi
 
 echo "Creating $WORKSPACE_DIR"
-mkdir -p $WORKSPACE_DIR
+mkdir -p "$WORKSPACE_DIR"
 
 echo "Please enter a host name (or hit Return to stay with '$HOSTNAME'): "
-read computername
+read -r computername
 
 if [ -n "$computername" ]; then
   if [[ $computername =~ \.local$ ]]; then
@@ -51,31 +51,32 @@ if [ -n "$computername" ]; then
     newhostname="$computername.local"
   fi
   echo "Changing host name to $computername"
-  scutil --set ComputerName $computername
-  scutil --set LocalHostName $computername
-  scutil --set HostName $newhostname
+  scutil --set ComputerName "$computername"
+  scutil --set LocalHostName "$computername"
+  scutil --set HostName "$newhostname"
 else
   echo "Not changing host name"
 fi
 
 if [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
   echo "Please enter your email: "
-  read email
+  read -r email
   ssh-keygen -t rsa -C "$email"
-  cat $HOME/.ssh/id_rsa.pub
+  cat "$HOME/.ssh/id_rsa.pub"
 fi
 
-cat $HOME/.ssh/id_rsa.pub | pbcopy
-read -p "Your public ssh key is in your pasteboard. Add it to github.com if it's not already there and hit Return"
+pbcopy < "$HOME/.ssh/id_rsa.pub"
+read -r -p "Your public ssh key is in your pasteboard. Add it to github.com if it's not already there and hit Return"
 
 echo "Removing system gems"
 sudo -i 'gem update --system'
 sudo -i 'gem clean'
 
-grep '. "$HOME/.bashrc"' $HOME/.bash_profile > /dev/null
-if [[ "$?" -ne "0" ]]; then
+# shellcheck disable=SC2016
+if ! grep '. "$HOME/.bashrc"' "$HOME/.bash_profile" > /dev/null ; then
   echo "Making .bash_profile source .bashrc"
-  echo '. "$HOME/.bashrc"' >> $HOME/.bash_profile
+  # shellcheck disable=SC2016
+  echo '. "$HOME/.bashrc"' >> "$HOME/.bash_profile"
 fi
 
 if ! command -v brew > /dev/null; then
@@ -94,12 +95,12 @@ brew bundle
 
 echo "Preparing system for dotfiles"
 
-cd $WORKSPACE_DIR
+cd "$WORKSPACE_DIR" || exit 5
 if [ ! -d "$HOME/dotfiles" ]; then
   git clone --recursive https://github.com/zbeekman/dotfiles dotfiles
-  cd dotfiles
+  cd dotfiles || exit 4
 else
-  cd dotfiles
+  cd dotfiles || exit 3
   git pull --rebase
 fi
 
@@ -107,7 +108,7 @@ git submodule init
 git submodule update
 
 echo "Writing .gemrc"
-cat > $HOME/.gemrc <<GEMRC
+cat > "$HOME/.gemrc" <<GEMRC
 ---
 :benchmark: false
 gem: --no-ri --no-rdoc
@@ -129,17 +130,18 @@ if [[ ! -f "$HOME/.bashrc" ]]; then
   touch "$HOME/.bashrc"
 fi
 
-source $HOME/.bash_profile
+# shellcheck source=/Users/ibeekman/.profile
+source "$HOME/.profile"
 echo "Finished."
 
-(cd ~
+(cd ~ || exit 6
  ln -s dotfiles/secrets/.secrets
  ln -s dotfiles/screen/.screenrc
  ln -s .Brewfile dotfiles/Brewfile
  for d in dotfiles/git/.*/ ; do
    ln -s "$d"
  done
- (cd .ssh
+ (cd .ssh || exit 7
    ln -s ../dotfiles/ssh/.ssh/config
    ln -s ../dotfiles/ssh/.ssh/tmp
    ln -s ../dotfiles/ssh/.ssh/known_hosts
@@ -149,7 +151,7 @@ echo "Finished."
 if [[ -e /usr/local/bin/bash ]]; then
   echo "Adding Homebrew installed bash to allowable shells"
   echo "/usr/loca/bin/bash" | sudo tee -a /etc/shells
-  chsh -s /usr/local/bin/bash $USER
+  chsh -s /usr/local/bin/bash "$USER"
 fi
 
 echo "To activate keyboard layout, restart computer then >System Preferences >Language and Region >Keyboard Preferences >Input Sources"
