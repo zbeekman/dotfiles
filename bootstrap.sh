@@ -19,9 +19,9 @@ if ! xcode-select -p &> /dev/null && [[ ! -f "/Developer/Library/uninstall-devto
   exit 0
 fi
 
-sudo xcodebuild -license
-
 xcode-select --install
+
+sudo xcodebuild -license
 
 if [ -n "$WORKSPACE_DIR" ]; then
   # don't let them change it if it's already set
@@ -72,10 +72,6 @@ echo "Starting ssh-agent and adding key"
 eval "$(ssh-agent -s)"
 ssh-add -K "$HOME/.ssh/id_rsa"
 
-echo "Removing system gems"
-sudo -i 'gem update --system'
-sudo -i 'gem clean'
-
 # shellcheck disable=SC2016
 if ! grep '. "$HOME/.bashrc"' "$HOME/.bash_profile" > /dev/null ; then
   echo "Making .bash_profile source .bashrc"
@@ -96,6 +92,10 @@ echo "Installing tons of software via Homebrew... this could take a while..."
 echo "Homebrew is installing standard packages..."
 
 brew bundle
+
+echo "Removing system gems"
+sudo -i 'gem update --system'
+sudo -i 'gem clean'
 
 echo "Preparing system for dotfiles"
 
