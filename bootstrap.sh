@@ -139,6 +139,11 @@ echo "Finished."
  for d in dotfiles/git/.*/ ; do
    ln -s "$d"
  done
+ (cd .ssh
+   ln -s ../dotfiles/ssh/.ssh/config
+   ln -s ../dotfiles/ssh/.ssh/tmp
+   ln -s ../dotfiles/ssh/.ssh/known_hosts
+ )
 )
 
 if [[ -e /usr/local/bin/bash ]]; then
