@@ -68,6 +68,10 @@ fi
 pbcopy < "$HOME/.ssh/id_rsa.pub"
 read -r -p "Your public ssh key is in your pasteboard. Add it to github.com if it's not already there and hit Return"
 
+echo "Starting ssh-agent and adding key"
+eval "$(ssh-agent -s)"
+ssh-add -K "$HOME/.ssh/id_rsa"
+
 echo "Removing system gems"
 sudo -i 'gem update --system'
 sudo -i 'gem clean'
