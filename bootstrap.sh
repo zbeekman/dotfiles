@@ -14,7 +14,7 @@
 # License: See below
 
 xcode-select -p &> /dev/null
-if [ ["$?" -ne "0"] -a [! -f "/Developer/Library/uninstall-devtools"] ]; then
+if [[ "$?" !=  "0" && ! -f "/Developer/Library/uninstall-devtools" ]]; then
   read -p "Please install Xcode and re-run this script"
   exit 0
 fi
@@ -125,8 +125,36 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 12
 echo "Setting a blazingly fast keyboard repeat rate..."
 defaults write NSGlobalDomain KeyRepeat -int 0
 
+if [[ ! -f "$HOME/.bashrc" ]]; then
+  touch "$HOME/.bashrc"
+fi
+
 source $HOME/.bash_profile
 echo "Finished."
+
+(cd ~
+ ln -s dotfiles/secrets/.secrets
+ ln -s dotfiles/screen/.screenrc
+ ln -s .Brewfile dotfiles/Brewfile
+ for d in dotfiles/git/.*/ ; do
+   ln -s "$d"
+ done
+ (cd .ssh
+   ln -s ../dotfiles/ssh/.ssh/config
+   ln -s ../dotfiles/ssh/.ssh/tmp
+   ln -s ../dotfiles/ssh/.ssh/known_hosts
+ )
+)
+
+if [[ -e /usr/local/bin/bash ]]; then
+  echo "Adding Homebrew installed bash to allowable shells"
+  echo "/usr/loca/bin/bash" | sudo tee -a /etc/shells
+  chsh -s /usr/local/bin/bash $USER
+fi
+
+echo "To activate keyboard layout, restart computer then >System Preferences >Language and Region >Keyboard Preferences >Input Sources"
+echo "Then click \"+\" and select \"others\" on the left hand side pane. Select the layout just added"
+sudo cp "./osx-keylayout/My Layout.keylayout" "/Library/Keyboard Layouts"
 
 # Copyright (c) 2011 Rogelio J. Samour
 
