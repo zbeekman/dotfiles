@@ -102,9 +102,9 @@ echo "Preparing system for dotfiles"
 cd "$WORKSPACE_DIR" || exit 5
 if [ ! -d "$HOME/dotfiles" ]; then
   git clone --recursive https://github.com/zbeekman/dotfiles dotfiles
-  cd dotfiles || exit 4
+  cd "$HOME/dotfiles" || exit 4
 else
-  cd dotfiles || exit 3
+  cd "$HOME/dotfiles" || exit 3
   git pull --rebase
 fi
 

@@ -99,7 +99,6 @@ brew "gifsicle", args: ["with-x11"]
 brew "gist"
 brew "git"
 brew "git-cal"
-brew "git-latexdiff"
 brew "git-open"
 brew "git-plus"
 brew "global", args: ["with-ctags", "with-pygments"]
