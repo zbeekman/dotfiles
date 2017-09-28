@@ -6,8 +6,8 @@
 (if (eq system-type 'darwin)
     (progn (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 	   (setenv "PATH" (concat "/usr/local/ossh/bin:/usr/local/krb5/bin:" (getenv "PATH"))) ;DoD
-	   (osx-clipboard-mode +1)
-	   (osx-trash-setup)
+	   ;; (osx-clipboard-mode +1)
+	   ;; (osx-trash-setup)
 	   (setq delete-by-moving-to-trash t)
 	   )
   )
@@ -45,12 +45,12 @@
 (setq ido-create-new-buffer 'prompt)
 
 ;; auto completions
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-(ac-config-default)
-(global-auto-complete-mode t)
-(ac-set-trigger-key "TAB")
-(ac-set-trigger-key "<tab>")
+;; (require 'auto-complete-config)
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+;; (ac-config-default)
+;; (global-auto-complete-mode t)
+;; (ac-set-trigger-key "TAB")
+;; (ac-set-trigger-key "<tab>")
 
 ;; better performance, maybe...
 (setq redisplay-dont-pause t)
