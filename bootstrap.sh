@@ -91,7 +91,7 @@ brew tap homebrew/bundle
 echo "Installing tons of software via Homebrew... this could take a while..."
 echo "Homebrew is installing standard packages..."
 
-brew bundle
+brew bundle --force
 
 echo "Removing system gems"
 sudo -i 'gem update --system'

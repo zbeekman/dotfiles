@@ -286,7 +286,7 @@ brew "yubico-piv-tool"
 brew "yuicompressor"
 brew "zbar"
 brew "zlib"
-cask "adobe-reader"
+cask "adobe-acrobat-reader"
 cask "amidst"
 cask "anylist"
 cask "argouml"
@@ -311,7 +311,6 @@ cask "gpgtools"
 cask "hyper"
 cask "imagealpha"
 cask "imageoptim"
-cask "iterm2"
 cask "iterm2-beta"
 cask "java8"
 cask "kextviewr"
@@ -337,7 +336,6 @@ cask "qlvideo"
 cask "qr-journal"
 cask "quicklook-csv"
 cask "quicklook-json"
-cask "ransomwhere"
 cask "screenhero"
 cask "silverlight"
 cask "skim"
@@ -363,8 +361,6 @@ mas "CCMenu", id: 603117688
 mas "Disk Aid", id: 1007358832
 mas "Disk Doctor", id: 455970963
 mas "Duplicate Detective", id: 686428787
-mas "Install OS X El Capitan", id: 1018109117
-mas "Install OS X El Capitan", id: 1018109117
 mas "JPEGmini", id: 498944723
 mas "Stockfish", id: 801463932
 mas "Xcode", id: 497799835
