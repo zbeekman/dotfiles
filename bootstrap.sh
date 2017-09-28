@@ -125,7 +125,8 @@ gem: --no-ri --no-rdoc
 GEMRC
 
 echo "Setting a shorter Delay until key repeat..."
-defaults write NSGlobalDomain InitialKeyRepeat -int 12
+defaults write -g InitialKeyRepeat -int 10 # normal minimum is 15 (225 ms)
+defaults write -g KeyRepeat -int 2 # normal minimum is 2 (30 ms)
 
 echo "Setting a blazingly fast keyboard repeat rate..."
 defaults write NSGlobalDomain KeyRepeat -int 0
@@ -135,7 +136,9 @@ if [[ ! -f "$HOME/.bashrc" ]]; then
 fi
 
 # shellcheck source=/Users/ibeekman/.profile
-source "$HOME/.profile"
+[[ -f "$HOME/.profile" ]] && source "$HOME/.profile"
+# shellcheck source=/Users/ibeekman/.bash_profile
+[[ -f "$HOME/.bash_profile" ]] && source "$HOME/.bash_profile"
 echo "Finished."
 
 (cd ~ || exit 6
