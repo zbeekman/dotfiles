@@ -142,6 +142,8 @@ echo "Finished."
 
 (
   cd ~ || exit 6
+  ln -s dotfiles/.profile
+  ln -s dotfiles/.bashrc
   ln -s dotfiles/secrets/.secrets
   ln -s dotfiles/screen/.screenrc
   ln -s .Brewfile dotfiles/Brewfile
