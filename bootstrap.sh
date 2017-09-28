@@ -117,8 +117,8 @@ gem: --no-ri --no-rdoc
 GEMRC
 
 echo "Setting a shorter Delay until key repeat..."
-defaults write -g InitialKeyRepeat -int 15 # normal minimum is 15 (225 ms)
-defaults write -g KeyRepeat -int 8         # normal minimum is 2 (30 ms)
+defaults write -g InitialKeyRepeat -int 10 # normal minimum is 15 (225 ms)
+defaults write -g KeyRepeat -int 1        # normal minimum is 2 (30 ms)
 
 echo "Setting a blazingly fast keyboard repeat rate..."
 defaults write NSGlobalDomain KeyRepeat -int 0
@@ -140,8 +140,8 @@ echo "Finished."
   ln -s dotfiles/secrets/.secrets
   ln -s dotfiles/screen/.screenrc
   ln -s .Brewfile dotfiles/Brewfile
-  for d in dotfiles/git/.*/; do
-    ln -s "$d"
+  for thing in dotfiles/git/.*; do
+    ln -s "$thing"
   done
   (
     cd .ssh || exit 7
