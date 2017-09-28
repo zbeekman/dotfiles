@@ -47,3 +47,28 @@ fi
 if brew command command-not-found-init >/dev/null 2>&1; then
   eval "$(brew command-not-found-init)"
 fi
+
+# mkcd: mkdir and cd into it
+mkcd () { mkdir -p "$@" && eval cd "\"\$$#\""; }
+
+# extract: untar all the things
+extract() {
+    if [ -f $1 ]; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1    ;;
+            *.tar.gz)    tar xvzf $1    ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar x $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xvf $1     ;;
+            *.tbz2)      tar xvjf $1    ;;
+            *.tgz)       tar xvzf $1    ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)           echo "I don't know how to extract \'$1\'..." ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
+}

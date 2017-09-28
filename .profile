@@ -1,4 +1,5 @@
-# shellcheck shell=sh
+#!/bin/sh
+# shellcheck shell=bash
 export CTEST_OUTPUT_ON_FAILURE=1
 export VAGRANT_SERVER_URL="https://sourceryinstitute-vagrant-Sourcery-Institute-Lubuntu-VM.bintray.io"
 export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
