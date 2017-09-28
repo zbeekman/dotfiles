@@ -13,8 +13,7 @@
 #   your own risk.
 # License: See below
 
-
-if ! xcode-select -p &> /dev/null && [[ ! -f "/Developer/Library/uninstall-devtools" ]]; then
+if ! xcode-select -p &>/dev/null && [[ ! -f "/Developer/Library/uninstall-devtools" ]]; then
   read -r -p "Please install Xcode and re-run this script"
   exit 0
 fi
@@ -65,7 +64,7 @@ if [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
   cat "$HOME/.ssh/id_rsa.pub"
 fi
 
-pbcopy < "$HOME/.ssh/id_rsa.pub"
+pbcopy <"$HOME/.ssh/id_rsa.pub"
 read -r -p "Your public ssh key is in your pasteboard. Add it to github.com if it's not already there and hit Return"
 
 echo "Starting ssh-agent and adding key"
@@ -73,13 +72,13 @@ eval "$(ssh-agent -s)"
 ssh-add -K "$HOME/.ssh/id_rsa"
 
 # shellcheck disable=SC2016
-if ! grep '. "$HOME/.bashrc"' "$HOME/.bash_profile" > /dev/null ; then
+if ! grep '. "$HOME/.bashrc"' "$HOME/.bash_profile" >/dev/null; then
   echo "Making .bash_profile source .bashrc"
   # shellcheck disable=SC2016
-  echo '. "$HOME/.bashrc"' >> "$HOME/.bash_profile"
+  echo '. "$HOME/.bashrc"' >>"$HOME/.bash_profile"
 fi
 
-if ! command -v brew > /dev/null; then
+if ! command -v brew >/dev/null; then
   echo "Installing homebrew"
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
@@ -112,7 +111,7 @@ git submodule init
 git submodule update
 
 echo "Writing .gemrc"
-cat > "$HOME/.gemrc" <<GEMRC
+cat >"$HOME/.gemrc" <<GEMRC
 ---
 :benchmark: false
 gem: --no-ri --no-rdoc
@@ -126,7 +125,7 @@ GEMRC
 
 echo "Setting a shorter Delay until key repeat..."
 defaults write -g InitialKeyRepeat -int 10 # normal minimum is 15 (225 ms)
-defaults write -g KeyRepeat -int 2 # normal minimum is 2 (30 ms)
+defaults write -g KeyRepeat -int 2         # normal minimum is 2 (30 ms)
 
 echo "Setting a blazingly fast keyboard repeat rate..."
 defaults write NSGlobalDomain KeyRepeat -int 0
@@ -141,18 +140,20 @@ fi
 [[ -f "$HOME/.bash_profile" ]] && source "$HOME/.bash_profile"
 echo "Finished."
 
-(cd ~ || exit 6
- ln -s dotfiles/secrets/.secrets
- ln -s dotfiles/screen/.screenrc
- ln -s .Brewfile dotfiles/Brewfile
- for d in dotfiles/git/.*/ ; do
-   ln -s "$d"
- done
- (cd .ssh || exit 7
-   ln -s ../dotfiles/ssh/.ssh/config
-   ln -s ../dotfiles/ssh/.ssh/tmp
-   ln -s ../dotfiles/ssh/.ssh/known_hosts
- )
+(
+  cd ~ || exit 6
+  ln -s dotfiles/secrets/.secrets
+  ln -s dotfiles/screen/.screenrc
+  ln -s .Brewfile dotfiles/Brewfile
+  for d in dotfiles/git/.*/; do
+    ln -s "$d"
+  done
+  (
+    cd .ssh || exit 7
+    ln -s ../dotfiles/ssh/.ssh/config
+    ln -s ../dotfiles/ssh/.ssh/tmp
+    ln -s ../dotfiles/ssh/.ssh/known_hosts
+  )
 )
 
 if [[ -e /usr/local/bin/bash ]]; then
