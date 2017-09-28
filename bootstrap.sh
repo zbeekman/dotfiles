@@ -19,8 +19,7 @@ if ! xcode-select -p &>/dev/null && [[ ! -f "/Developer/Library/uninstall-devtoo
 fi
 
 xcode-select --install
-
-sudo xcodebuild -license
+sudo xcodebuild -license accept
 
 if [ -n "$WORKSPACE_DIR" ]; then
   # don't let them change it if it's already set
@@ -91,6 +90,7 @@ echo "Installing tons of software via Homebrew... this could take a while..."
 echo "Homebrew is installing standard packages..."
 
 brew bundle --force
+sudo xcodebuild -license accept
 
 echo "Removing system gems"
 sudo -i 'gem update --system'
