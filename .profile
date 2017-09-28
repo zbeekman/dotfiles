@@ -68,3 +68,10 @@ if [ "$(basename "${SHELL}")" = "bash" ]; then
   # shellcheck source=/Users/ibeekman/.bashrc
   [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
 fi
+
+# Fire up an ssh agent
+if ps -p $SSH_AGENT_PID > /dev/null ; then
+  echo "ssh-agent running with pid $SSH_AGENT_PID"
+else
+  eval "`ssh-agent -s`"
+fi

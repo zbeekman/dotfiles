@@ -72,3 +72,24 @@ extract() {
         echo "'$1' is not a valid file!"
     fi
 }
+
+# Fire up an ssh agent
+if ps -p $SSH_AGENT_PID > /dev/null ; then
+  echo "ssh-agent running with pid $SSH_AGENT_PID"
+else
+  eval "`ssh-agent -s`"
+fi
+
+rsa_keys=("${HOME}"/.ssh/*_rsa)
+if [[ -f "${rsa_keys[0]}" ]]; then
+  for k in "${rsa_keys[@]}" ; do
+    ssh-add "$k"
+  done
+fi
+
+dsa_keys=("${HOME}"/.ssh/*_dsa)
+if [[ -f "${dsa_keys[0]}" ]]; then
+  for k in "${dsa_keys[@}" ; do
+    ssh-add "$k"
+  done
+fi
