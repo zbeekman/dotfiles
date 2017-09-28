@@ -70,13 +70,6 @@ echo "Starting ssh-agent and adding key"
 eval "$(ssh-agent -s)"
 ssh-add -K "$HOME/.ssh/id_rsa"
 
-# shellcheck disable=SC2016
-if ! grep '. "$HOME/.bashrc"' "$HOME/.bash_profile" >/dev/null; then
-  echo "Making .bash_profile source .bashrc"
-  # shellcheck disable=SC2016
-  echo '. "$HOME/.bashrc"' >>"$HOME/.bash_profile"
-fi
-
 if ! command -v brew >/dev/null; then
   echo "Installing homebrew"
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -124,8 +117,8 @@ gem: --no-ri --no-rdoc
 GEMRC
 
 echo "Setting a shorter Delay until key repeat..."
-defaults write -g InitialKeyRepeat -int 10 # normal minimum is 15 (225 ms)
-defaults write -g KeyRepeat -int 2         # normal minimum is 2 (30 ms)
+defaults write -g InitialKeyRepeat -int 15 # normal minimum is 15 (225 ms)
+defaults write -g KeyRepeat -int 8         # normal minimum is 2 (30 ms)
 
 echo "Setting a blazingly fast keyboard repeat rate..."
 defaults write NSGlobalDomain KeyRepeat -int 0
@@ -136,8 +129,8 @@ fi
 
 # shellcheck source=/Users/ibeekman/.profile
 [[ -f "$HOME/.profile" ]] && source "$HOME/.profile"
-# shellcheck source=/Users/ibeekman/.bash_profile
-[[ -f "$HOME/.bash_profile" ]] && source "$HOME/.bash_profile"
+# shellcheck source=/Users/ibeekman/.profile
+[[ -f "$HOME/.profile" ]] && source "$HOME/.profile"
 echo "Finished."
 
 (
