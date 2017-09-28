@@ -74,10 +74,10 @@ extract() {
 }
 
 # Fire up an ssh agent
-if ps -p $SSH_AGENT_PID > /dev/null ; then
+if ps -p $SSH_AGENT_PID > /dev/null 2>&1; then
   echo "ssh-agent running with pid $SSH_AGENT_PID"
 else
-  eval "`ssh-agent -s`"
+  eval "$(ssh-agent -s)"
 fi
 
 rsa_keys=("${HOME}"/.ssh/*_rsa)
@@ -89,7 +89,7 @@ fi
 
 dsa_keys=("${HOME}"/.ssh/*_dsa)
 if [[ -f "${dsa_keys[0]}" ]]; then
-  for k in "${dsa_keys[@}" ; do
+  for k in "${dsa_keys[@]}" ; do
     ssh-add "$k"
   done
 fi
