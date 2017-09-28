@@ -160,7 +160,7 @@ echo "Finished."
 
 if [[ -e /usr/local/bin/bash ]]; then
   echo "Adding Homebrew installed bash to allowable shells"
-  echo "/usr/loca/bin/bash" | sudo tee -a /etc/shells
+  echo "/usr/local/bin/bash" | sudo tee -a /etc/shells
   chsh -s /usr/local/bin/bash "$USER"
 fi
 
