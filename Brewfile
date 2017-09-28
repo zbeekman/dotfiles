@@ -363,4 +363,5 @@ mas "Disk Doctor", id: 455970963
 mas "Duplicate Detective", id: 686428787
 mas "JPEGmini", id: 498944723
 mas "Stockfish", id: 801463932
+mas "xDiagram", id: 517581636
 mas "Xcode", id: 497799835
