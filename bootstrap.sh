@@ -117,8 +117,8 @@ gem: --no-ri --no-rdoc
 GEMRC
 
 echo "Setting a shorter Delay until key repeat..."
-defaults write -g InitialKeyRepeat -int 9 # normal minimum is 15 (225 ms)
-defaults write -g KeyRepeat -int 2        # normal minimum is 2 (30 ms)
+defaults write -g InitialKeyRepeat -int 14 # normal minimum is 15 (225 ms)
+defaults write -g KeyRepeat -int 2         # normal minimum is 2 (30 ms)
 
 echo "Setting a blazingly fast keyboard repeat rate..."
 defaults write NSGlobalDomain KeyRepeat -int 0
