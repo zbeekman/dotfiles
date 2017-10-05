@@ -75,3 +75,5 @@ if ps -p $SSH_AGENT_PID > /dev/null 2>&1 ; then
 else
   eval "`ssh-agent -s`"
 fi
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
