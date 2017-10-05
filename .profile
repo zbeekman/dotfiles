@@ -1,5 +1,4 @@
-#!/bin/sh
-# shellcheck shell=bash
+# shellcheck shell=sh
 export CTEST_OUTPUT_ON_FAILURE=1
 export VAGRANT_SERVER_URL="https://sourceryinstitute-vagrant-Sourcery-Institute-Lubuntu-VM.bintray.io"
 export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
@@ -56,10 +55,12 @@ export LESS_TERMCAP_ue
 # Enable syntax-highlighting in less.
 # brew install source-highlight
 # First, add these two lines to ~/.bashrc
-export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"
-export LESS=" -iXFR "
-alias less='less -m -N -g -i -J --underline-special --SILENT'
+export LESSOPEN="| $(type -P highlight) %s --out-format xterm256 --quiet --force --style candy"
+export LESS=" -i -R -J "
+alias less='less -i -F -X -M -N -J'
 alias more='less'
+alias show="highlight $@ --out-format xterm256 --line-numbers --quiet --force --style candy"
+
 
 # shellcheck source=/Users/ibeekman/.secrets/tokens
 test -e "${HOME}/.secrets/tokens" && . "${HOME}/.secrets/tokens"
@@ -69,11 +70,12 @@ if [ "$(basename "${SHELL}")" = "bash" ]; then
   [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
 fi
 
-# Fire up an ssh agent
-if ps -p $SSH_AGENT_PID > /dev/null 2>&1 ; then
-  echo "ssh-agent running with pid $SSH_AGENT_PID"
+if [ -n "${PKG_CONFIG_PATH}" ]; then
+  export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
 else
-  eval "`ssh-agent -s`"
+  export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 fi
 
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
+export PATH=$PATH:$GOPATH/bin

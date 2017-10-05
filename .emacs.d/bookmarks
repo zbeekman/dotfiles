@@ -1,0 +1,32 @@
+;;;; Emacs Bookmark Format Version 1 ;;;;
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("tcplt_hdr"
+ (filename . "~/Sandbox/object-oriented/src/spocs/spocs_accuracy.F90")
+ (front-context-string . "subroutine write")
+ (rear-context-string . "ce_tcplt_hdr\n\n  ")
+ (position . 20177)
+ (annotation . "write tecplot header subroutine in spocs_accuracy.F90 using a generic\n"))
+("sa_f90_type_decs"
+ (filename . "~/Sandbox/object-oriented/src/spocs/spocs_accuracy.F90")
+ (front-context-string . "type trad_stat\n ")
+ (rear-context-string . "itional stats\n  ")
+ (position . 1720)
+ (annotation . "type declarations in spocs_accuracy.F90"))
+("org-capture-last-stored-marker"
+ (filename . "~/org/NextActions.org")
+ (front-context-string . "** MEETING with ")
+ (rear-context-string . "2015-06-17 Wed]\n")
+ (position . 644))
+("org-refile-last-stored"
+ (filename . "~/org/NextActions.org")
+ (front-context-string . "** MEETING with ")
+ (rear-context-string . "2015-06-17 Wed]\n")
+ (position . 644))
+("org-capture-last-stored"
+ (filename . "~/org/InBox.org")
+ (front-context-string)
+ (rear-context-string . "2B83CCDC3\n:END:\n")
+ (position . 724))
+)
