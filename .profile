@@ -75,4 +75,7 @@ if [ -n "${PKG_CONFIG_PATH}" ]; then
 else
   export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 fi
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
 export PATH=$PATH:$GOPATH/bin
