@@ -1,5 +1,5 @@
-;; ;; Uncomment to enable debugging
-;;(setq debug-on-error t) ; set this to get stack traces on errors
+;; Uncomment to enable debugging
+(setq debug-on-error t) ; set this to get stack traces on errors
 
 ;; Use use-package to create portable emacs-config
 ;; bootstrap emacs setup from package managers
@@ -26,6 +26,9 @@
 (setq use-package-verbose t) ; verbose init debug & profiling
 
 ;; Use the zenburn theme, but ONLY if we have a window system
+(setq custom-safe-themes
+      (quote
+       ("67e998c3c23fe24ed0fb92b9de75011b92f35d3e89344157ae0d544d50a63a72" default)))
 (use-package zenburn-theme
   :if window-system
   :ensure t
@@ -36,6 +39,7 @@
 ;; Starts the Emacs server when window system
 (use-package edit-server
   :if window-system
+  :ensure t
   :init
   (add-hook 'after-init-hook 'server-start t)
   (add-hook 'after-init-hook 'edit-server-start t))
@@ -47,7 +51,19 @@
   :config
   (exec-path-from-shell-initialize))
 
+;; Install macOS specific helper packages
+(use-package osx-clipboard
+  :if (eq system-type 'darwin)
+  
 ;; misc variables
+(when window-system
+  (set-frame-position (selected-frame) 0 0)
+  (set-frame-size (selected-frame) 132 70))
+(setq tab-width 4)          ; and 4 char wide for TAB
+(setq indent-tabs-mode nil) ; And force use of spaces
+(turn-on-font-lock)         ; same as syntax on in Vim
+(setq inhibit-startup-screen t)
+(setq vc-follow-symlinks t)
 (setq scroll-step 1) ;; M-n & M-p scroll one line not many
 (setq calendar-latitude 38.9047)
 (setq calendar-longitude -77.0164)
@@ -82,18 +98,19 @@
 
 ;; put speedbar in same frame. CMD-s should toggle it...
 (use-package sr-speedbar
-	     :bind ("s-s" . sr-speedbar-toggle))
+  :ensure t
+  :defer t
+  :init
+  (setq sr-speedbar-right-side nil)
+  (setq speedbar-show-unknown-files t)
+  (setq sr-speedbar-width 35)
+  :bind ("s-s" . sr-speedbar-toggle))
 
 
 ; Display (or don't display) trailing whitespace characters using an
 ; unusual background color so they are visible.
 (setq-default show-trailing-whitespace t)
 (setq-default indicate-empty-lines t)
-
-; Use yaml-mode for YAML files
-(use-package yaml-mode
-	     :mode
-	     (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode)))
 
 ; Configure LaTeX stuff like Auctex
 (use-package tex
@@ -127,8 +144,22 @@
 ;; (eval-after-load 'tramp-sh '(add-to-list 'tramp-actions-before-shell
 ;;              '(DSRC-tramp-prompt-regexp DSRC-tramp-action)))
 
-;; Flymake
-(use-package flymake
-	     :init
-	     (setq flymake-run-in-place nil) ; nice default 4 tramp, .dir-locals.el overrides
-	     :config
+;; ;; Flymake
+;; (use-package flymake
+;; 	     :init
+;; 	     (setq flymake-run-in-place nil) ; nice default 4 tramp, .dir-locals.el overrides
+;; 	     :config
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (auctex zenburn-theme use-package exec-path-from-shell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
