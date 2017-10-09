@@ -1,6 +1,6 @@
 # shellcheck shell=sh
 export CTEST_OUTPUT_ON_FAILURE=1
-export VAGRANT_SERVER_URL="https://sourceryinstitute-vagrant-Sourcery-Institute-Lubuntu-VM.bintray.io"
+#export VAGRANT_SERVER_URL="https://sourceryinstitute-vagrant-Sourcery-Institute-Lubuntu-VM.bintray.io"
 export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
 if [ -d "/usr/local/texlive/2016/bin/x86_64-darwin" ]; then
   export PATH="/usr/local/texlive/2016/bin/x86_64-darwin:${PATH}"
@@ -79,3 +79,5 @@ fi
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
 export PATH=$PATH:$GOPATH/bin
+
+export __TAUCMDR_PROGRESS_BARS__="minimal"
