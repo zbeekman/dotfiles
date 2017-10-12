@@ -54,11 +54,18 @@
 ;; Install macOS specific helper packages
 (use-package osx-clipboard
   :if (eq system-type 'darwin)
-  
+  :ensure t
+  :config (osx-clipboard-mode +1))
+
+(use-package osx-trash
+  :if (eq system-type 'darwin)
+  :ensure t)
+
 ;; misc variables
 (when window-system
   (set-frame-position (selected-frame) 0 0)
-  (set-frame-size (selected-frame) 132 70))
+  (set-frame-size (selected-frame) 192 71))
+;; see also default-frame-alist and initial-frame-alist
 (setq tab-width 4)          ; and 4 char wide for TAB
 (setq indent-tabs-mode nil) ; And force use of spaces
 (turn-on-font-lock)         ; same as syntax on in Vim
@@ -75,26 +82,28 @@
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 ;; ;; for homebrew install of magit... waaaaay faster than building with melpa etc.
 ;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp")
+(setq delete-by-moving-to-trash t)
+(setq exec-path (append '("/usr/local/bin")
+                        exec-path))
+(setq desktop-restore-eager 3)
+(setq desktop-restore-forces-onscreen all)
+(setq desktop-save ask-if-new)
+(when window-system
+  (desktop-save-mode 1)
+  (tool-bar-mode -1))
+(global-set-key "\C-cM" 'compile)
+(global-set-key "\C-cm" 'rcompile)
+(setq ediff-split-window-function split-window-vertically)
 
-;; ;; macOS stuff
-;; (if (eq system-type 'darwin)
-;;     (progn (setenv "PATH" (concat "/usr/local/bin" (getenv "PATH")))
-;; 	   (osx-clipboard-mode +1)
-;; 	   (osx-trash-setup)
-;; 	   (setq delete-by-moving-to-trash t)
-;; 	   (setq exec-path (prepend exec-path '("/usr/local/bin")))
-;; 	   ;; use Skim as default pdf viewer Skim's displayline is used for
-;; 	   ;; forward search (from .tex to .pdf) option -b highlights the current
-;; 	   ;; line; option -g opens Skim in the background
-;; 	   (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
-;; 	   (setq TeX-view-program-list
-;; 		 '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
-;; 	   ;; (if (file-executable-p "/usr/local/bin/aspell")
-;; 	   ;;     (progn
-;; 	   ;; 	 (setq ispell-program-name "/usr/local/bin/aspell")
-;; 	   ;; 	 (setq ispell-extra-args '("-d" "/Library/Application Support/cocoAspell/aspell6-en-6.0-0/en.multi"))
-;; 	   ;; 	 ))
-;; 	   ))
+
+;; macOS stuff
+(if (eq system-type 'darwin)
+    (progn
+      (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+      (setq TeX-view-program-list
+	    '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+      )
+  )
 
 ;; put speedbar in same frame. CMD-s should toggle it...
 (use-package sr-speedbar
@@ -144,11 +153,16 @@
 ;; (eval-after-load 'tramp-sh '(add-to-list 'tramp-actions-before-shell
 ;;              '(DSRC-tramp-prompt-regexp DSRC-tramp-action)))
 
-;; ;; Flymake
-;; (use-package flymake
-;; 	     :init
-;; 	     (setq flymake-run-in-place nil) ; nice default 4 tramp, .dir-locals.el overrides
-;; 	     :config
+;; Flymake
+(use-package flymake-cursor
+  :ensure flymake
+  :init
+  (setq flymake-run-in-place nil) ; nice default 4 tramp, .dir-locals.el overrides
+  :bind ("C-c n" . flymake-goto-next-error)
+  :bind ("C-c p" . flymake-goto-prev-error)
+  )
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
