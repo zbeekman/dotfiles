@@ -5,11 +5,8 @@ export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
 if [ -d "/usr/local/texlive/2016/bin/x86_64-darwin" ]; then
   export PATH="/usr/local/texlive/2016/bin/x86_64-darwin:${PATH}"
 fi
-if [ -d "/usr/local/krb5/bin" ]; then
-  export PATH="/usr/local/krb5/bin:${PATH}"
-fi
-if [ -d "/usr/local/ossh/bin" ]; then
-  export PATH="/usr/local/ossh/bin:${PATH}"
+if [ -d "/usr/local/bin" ]; then
+  export PATH="/usr/local/bin:${PATH}"
 fi
 if [ -d "${HOME}/.jenv/bin" ]; then
   export PATH="${HOME}/.jenv/bin:${PATH}"

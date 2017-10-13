@@ -86,17 +86,17 @@
 (setq exec-path (append '("/usr/local/bin")
                         exec-path))
 (setq desktop-restore-eager 3)
-(setq desktop-restore-forces-onscreen all)
-(setq desktop-save ask-if-new)
+(setq desktop-restore-forces-onscreen 'all)
+(setq desktop-save 'ask-if-new)
 (when window-system
   (desktop-save-mode 1)
   (tool-bar-mode -1))
 (global-set-key "\C-cM" 'compile)
 (global-set-key "\C-cm" 'rcompile)
-(setq ediff-split-window-function split-window-vertically)
+(setq ediff-split-window-function 'split-window-horizontally)
 (setq imenu-auto-rescan t)
 (setq imenu-max-items 50)
-(setq imenu-sort-function imenu--sort-by-name)
+(setq imenu-sort-function 'imenu--sort-by-name)
 
 
 ;; macOS stuff

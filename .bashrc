@@ -10,6 +10,10 @@
   fi
 }
 
+if [ -d "/usr/local/bin" ]; then
+  export PATH="/usr/local/bin:${PATH}"
+fi # ensure mosh on path
+
 # The following lines are only for interactive shells
 [[ $- == *i* ]] || return
 
