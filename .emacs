@@ -94,6 +94,9 @@
 (global-set-key "\C-cM" 'compile)
 (global-set-key "\C-cm" 'rcompile)
 (setq ediff-split-window-function split-window-vertically)
+(setq imenu-auto-rescan t)
+(setq imenu-max-items 50)
+(setq imenu-sort-function imenu--sort-by-name)
 
 
 ;; macOS stuff
