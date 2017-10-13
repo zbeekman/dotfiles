@@ -53,7 +53,7 @@
 
 ;; Install macOS specific helper packages
 (use-package osx-clipboard
-  :if (eq system-type 'darwin)
+  :if (eq system-type 'darwin))
   
 ;; misc variables
 (when window-system
