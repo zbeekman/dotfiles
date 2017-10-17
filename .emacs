@@ -61,11 +61,16 @@
   :if (eq system-type 'darwin)
   :ensure t)
 
+;; Always use recentf
+
 ;; misc variables
+(setq f90-smart-end-names nil)
 (when window-system
   (set-frame-position (selected-frame) 0 0)
   (set-frame-size (selected-frame) 192 71))
 ;; see also default-frame-alist and initial-frame-alist
+(setq redisplay-dont-pause t) ; better performance, maybe...
+(setq transient-mark-mode t)
 (setq tab-width 4)          ; and 4 char wide for TAB
 (setq indent-tabs-mode nil) ; And force use of spaces
 (turn-on-font-lock)         ; same as syntax on in Vim
@@ -97,7 +102,18 @@
 (setq imenu-auto-rescan t)
 (setq imenu-max-items 50)
 (setq imenu-sort-function 'imenu--sort-by-name)
-
+;; backups
+(setq make-backup-files 'non-nil)
+(setq
+   backup-by-copying t       ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.saves"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 3
+   version-control t)
+; default to unified diffs
+(setq diff-switches "-u")
 
 ;; macOS stuff
 (if (eq system-type 'darwin)
@@ -165,6 +181,130 @@
   :bind ("C-c p" . flymake-goto-prev-error)
   )
 
+;; Markdown support
+;; https://jblevins.org/projects/markdown-mode/
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . gfm-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+(use-package yaml-mode
+  :ensure t
+  :commands (yaml-mode)
+  :mode (("\\.yml\\'" . yaml-mode)
+         ("\\.yaml\\'" . yaml-mode)))
+
+(use-package cmake-mode
+  :ensure t
+  :commands (cmake-mode)
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
+		("\\.cmake\\'" . cmake-mode)))
+
+(use-package highlight-parentheses
+  :ensure t
+  :commands (highlight-parentheses-mode)
+  :init (highlight-parentheses-mode 1))
+
+;; (use-package smartparens
+;;   :ensure t
+;;   :commands (smartparens-global-mode)
+;;   :init
+;;   (smartparens-global-mode t))
+
+(use-package smart-tab
+  :ensure cl-lib
+  :commands (global-smart-tab-mode)
+  :init
+  (global-smart-tab-mode 1)
+  (setq smart-tab-using-hippie-expand t))
+
+
+
+;; Recent file menu/opening from mastering emacs
+(require 'recentf)
+;; get rid of `find-file-read-only' and replace it with something
+;; more useful.
+(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+;; enable recent files mode.
+(recentf-mode t)
+; 100 files ought to be enough.
+(setq recentf-max-saved-items 100)
+(defun ido-recentf-open ()
+  "Use `ido-completing-read' to \\[find-file] a recent file"
+  (interactive)
+  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+      (message "Opening file...")
+    (message "Aborting")))
+;; http://www.masteringemacs.org/articles/2011/01/27/find-files-faster-recent-files-package/
+;; Give IDO mode a shot
+(setq ido-everywhere t)
+(setq ido-max-directory-size 100000)
+(ido-mode (quote both))
+; Use the current window when visiting files and buffers with ido
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+(setq ido-enable-flex-matching t)
+(ido-mode 1)
+(setq ido-use-filename-at-point 'guess)
+(setq ido-file-extensions-order '(".F90" ".f90" ".pbs" ".inp" ".sh" ".el" ".py" ".cmd" ".txt"))
+(setq ido-create-new-buffer 'prompt)
+;;(setq ido-ignore-extensions t)
+;;http://www.masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/
+;; Hippie expand customizations
+(setq hippie-expand-try-functions-list
+      '(try-expand-dabbrev-visible try-expand-dabbrev try-expand-all-abbrevs try-expand-dabbrev-from-kill try-expand-dabbrev-all-buffers try-complete-file-name-partially try-complete-file-name try-expand-list try-expand-line))
+
+
+;; Make certain files executable by default w/ shebang magic
+(setq my-shebang-patterns
+      (list "^#!/usr/.*/perl\\(\\( \\)\\|\\( .+ \\)\\)-w *.*"
+	    "^#!/usr/.*/sh"
+	    "^#!/usr/.*/bash"
+	    "^#!/usr/bin/env bash"
+	    "^#!/bin/sh"
+	    "^#!/bin/bash"
+	    "^#!/usr/bin/env python"
+	    "^#!/bin/sed -f"
+	    "^#!/bin/awk -f"
+	    "^#!/usr/bin/awk -f"))
+(add-hook
+ 'after-save-hook
+ (lambda ()
+   (if (not (= (shell-command (concat "test -x " (buffer-file-name))) 0))
+       (progn
+	 ;; This puts message in *Message* twice, but minibuffer
+	 ;; output looks better.
+	 (message (concat "Wrote " (buffer-file-name)))
+	 (save-excursion
+	   (goto-char (point-min))
+	   ;; Always checks every pattern even after
+	   ;; match.  Inefficient but easy.
+	   (dolist (my-shebang-pat my-shebang-patterns)
+	     (if (looking-at my-shebang-pat)
+		 (if (= (shell-command
+			 (concat "chmod u+x " (buffer-file-name)))
+			0)
+		     (message (concat
+			       "Wrote and made executable "
+			       (buffer-file-name))))))))
+     ;; This puts message in *Message* twice, but minibuffer output
+     ;; looks better.
+     (message (concat "Wrote " (buffer-file-name))))))
+
+;; F90 mode settings
+(add-hook 'f90-mode-hook
+          '(lambda ()
+	     (setq f90-beginning-ampersand nil)
+	     (f90-add-imenu-menu)
+;;	     (abbrev-mode 1)
+	     (column-number-mode t)
+	     (which-func-mode 1)
+	     (hide-ifdef-mode)
+	     (flyspell-prog-mode)
+	     (highlight-parentheses-mode 1)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -173,7 +313,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (auctex zenburn-theme use-package exec-path-from-shell))))
+    (smart-tab highlight-parentheses auctex zenburn-theme use-package exec-path-from-shell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

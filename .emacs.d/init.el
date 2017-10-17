@@ -1,81 +1,81 @@
-;;add more package archives
-(require 'package)
-(setq package-archives '(("org" . "http://orgmode.org/elpa/")
-			 ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
-;;(setq debug-on-error t) ; set this to get stack traces on errors
-(setq package-enable-at-startup nil)
-(package-initialize)
+;; ;;add more package archives
+;; (require 'package)
+;; (setq package-archives '(("org" . "http://orgmode.org/elpa/")
+;; 			 ("gnu" . "http://elpa.gnu.org/packages/")
+;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
+;;                          ("melpa" . "http://melpa.milkbox.net/packages/")))
+;; ;;(setq debug-on-error t) ; set this to get stack traces on errors
+;; (setq package-enable-at-startup nil)
+;; (package-initialize)
 
-;; Starts the Emacs server
-;;(server-start)
+;; ;; Starts the Emacs server
+;; ;;(server-start)
 
-(setq calendar-latitude 38.9047)
-(setq calendar-longitude -77.0164)
-(setq calendar-location-name "Washington, DC")
+;; (setq calendar-latitude 38.9047)
+;; (setq calendar-longitude -77.0164)
+;; (setq calendar-location-name "Washington, DC")
 
-;; mac laptop stuff
-(if (eq system-type 'darwin)
-    (progn (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-	   (setenv "PATH" (concat "/usr/local/ossh/bin:/usr/local/krb5/bin:" (getenv "PATH"))) ;DoD
-	   (osx-clipboard-mode +1)
-	   (osx-trash-setup)
-	   (setq delete-by-moving-to-trash t)
-	   ;; (add-hook 'org-clock-in-hook (lambda () (call-process "/usr/bin/osascript" nil 0 nil "-e" (concat "tell application \"org-clock-statusbar\" to clock in \"" org-clock-current-task "\""))))
-	   ;; (add-hook 'org-clock-out-hook (lambda () (call-process "/usr/bin/osascript" nil 0 nil "-e" "tell application \"org-clock-statusbar\" to clock out")))
-	   (setq exec-path (append exec-path '("/usr/local/bin")))
-	   ;; use Skim as default pdf viewer Skim's displayline is used for
-	   ;; forward search (from .tex to .pdf) option -b highlights the current
-	   ;; line; option -g opens Skim in the background
-	   (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
-	   (setq TeX-view-program-list
-		 '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
-	   ;; (if (file-executable-p "/usr/local/bin/aspell")
-	   ;;     (progn
-	   ;; 	 (setq ispell-program-name "/usr/local/bin/aspell")
-	   ;; 	 (setq ispell-extra-args '("-d" "/Library/Application Support/cocoAspell/aspell6-en-6.0-0/en.multi"))
-	   ;; 	 ))
-	   ))
+;; ;; mac laptop stuff
+;; (if (eq system-type 'darwin)
+;;     (progn (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+;; 	   (setenv "PATH" (concat "/usr/local/ossh/bin:/usr/local/krb5/bin:" (getenv "PATH"))) ;DoD
+;; 	   (osx-clipboard-mode +1)
+;; 	   (osx-trash-setup)
+;; 	   (setq delete-by-moving-to-trash t)
+;; 	   ;; (add-hook 'org-clock-in-hook (lambda () (call-process "/usr/bin/osascript" nil 0 nil "-e" (concat "tell application \"org-clock-statusbar\" to clock in \"" org-clock-current-task "\""))))
+;; 	   ;; (add-hook 'org-clock-out-hook (lambda () (call-process "/usr/bin/osascript" nil 0 nil "-e" "tell application \"org-clock-statusbar\" to clock out")))
+;; 	   (setq exec-path (append exec-path '("/usr/local/bin")))
+;; 	   ;; use Skim as default pdf viewer Skim's displayline is used for
+;; 	   ;; forward search (from .tex to .pdf) option -b highlights the current
+;; 	   ;; line; option -g opens Skim in the background
+;; 	   (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+;; 	   (setq TeX-view-program-list
+;; 		 '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g %n %o %b")))
+;; 	   ;; (if (file-executable-p "/usr/local/bin/aspell")
+;; 	   ;;     (progn
+;; 	   ;; 	 (setq ispell-program-name "/usr/local/bin/aspell")
+;; 	   ;; 	 (setq ispell-extra-args '("-d" "/Library/Application Support/cocoAspell/aspell6-en-6.0-0/en.multi"))
+;; 	   ;; 	 ))
+;; 	   ))
 
-;; put speedbar in same frame. CMD-s should toggle it...
- (require 'sr-speedbar)
- (global-set-key (kbd "s-s") 'sr-speedbar-toggle)
+;; ;; put speedbar in same frame. CMD-s should toggle it...
+;;  (require 'sr-speedbar)
+;;  (global-set-key (kbd "s-s") 'sr-speedbar-toggle)
 
-;; Copy environment variables over if on Mac window system
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+;; ;; Copy environment variables over if on Mac window system
+;; (when (memq window-system '(mac ns))
+;;   (exec-path-from-shell-initialize))
 
-; Make the Control-n and Control-p keys (and the down arrow and up
-; arrow keys) scroll the current window one line at a time instead
-; of one-half screen at a time.
-(setq scroll-step 1)
+;; ; Make the Control-n and Control-p keys (and the down arrow and up
+;; ; arrow keys) scroll the current window one line at a time instead
+;; ; of one-half screen at a time.
+;; (setq scroll-step 1)
 
-; Set text files to be utf-8 encoded
-(add-to-list 'file-coding-system-alist '("\\.txt" . utf-8-unix) )
-(add-to-list 'file-coding-system-alist '("\\.json" . utf-8-unix) )
-;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;; ; Set text files to be utf-8 encoded
+;; (add-to-list 'file-coding-system-alist '("\\.txt" . utf-8-unix) )
+;; (add-to-list 'file-coding-system-alist '("\\.json" . utf-8-unix) )
+;; ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+;; (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-; Display (or don't display) trailing whitespace characters using an
-; unusual background color so they are visible.
-(setq-default show-trailing-whitespace t)
-(setq-default indicate-empty-lines t)
+;; ; Display (or don't display) trailing whitespace characters using an
+;; ; unusual background color so they are visible.
+;; (setq-default show-trailing-whitespace t)
+;; (setq-default indicate-empty-lines t)
 
-; add YAML support
-(require 'yaml-mode)
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+;; ; add YAML support
+;; (require 'yaml-mode)
+;; (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 
-;; AucTex/RefTex stuff
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-(add-hook 'LaTeX-mode-hook 'flyspell-mode)
-(setq TeX-PDF-mode t)
+;; ;; AucTex/RefTex stuff
+;; (setq TeX-auto-save t)
+;; (setq TeX-parse-self t)
+;; (setq-default TeX-master nil)
+;; (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+;; (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+;; (setq TeX-PDF-mode t)
 
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-(setq reftex-plug-into-auctex t)
+;; (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+;; (setq reftex-plug-into-auctex t)
 
 
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
@@ -175,21 +175,21 @@
 
 
 ;; Save the emacs buffer state to local directory
-(desktop-save-mode 1)
+;; (desktop-save-mode 1)
 
 ;; ditch the iconified tool bar for more coding screen realestate.
-(tool-bar-mode -1)
+;; (tool-bar-mode -1)
 
 ;; bind a sane compilation to \C-cm
-(global-set-key "\C-cM" 'compile)
-(global-set-key "\C-cm" 'recompile) ;; this needs changing on account of magit
+;; (global-set-key "\C-cM" 'compile)
+;; (global-set-key "\C-cm" 'recompile) ;; this needs changing on account of magit
 
 
-(autoload 'markdown-mode "markdown-mode"
-  "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+;; (autoload 'markdown-mode "markdown-mode"
+;;   "Major mode for editing Markdown files" t)
+;; (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+;; (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+;; (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ;; Org mode stuff
 ; Enable habit tracking (and a bunch of other modules)
@@ -384,15 +384,15 @@
 (setq org-refile-allow-creating-parent-nodes (quote confirm))
 
 ; Use IDO for both buffer and file completion and ido-everywhere to t
-(setq org-completion-use-ido t)
-(setq ido-everywhere t)
-(setq ido-max-directory-size 100000)
-(ido-mode (quote both))
-; Use the current window when visiting files and buffers with ido
-(setq ido-default-file-method 'selected-window)
-(setq ido-default-buffer-method 'selected-window)
-; Use the current window for indirect buffer display
-(setq org-indirect-buffer-display 'current-window)
+;; (setq org-completion-use-ido t)
+;; (setq ido-everywhere t)
+;; (setq ido-max-directory-size 100000)
+;; (ido-mode (quote both))
+;; ; Use the current window when visiting files and buffers with ido
+;; (setq ido-default-file-method 'selected-window)
+;; (setq ido-default-buffer-method 'selected-window)
+;; ; Use the current window for indirect buffer display
+;; (setq org-indirect-buffer-display 'current-window)
 
 ;;;; Refile settings
 ; Exclude DONE state tasks from refile targets
@@ -1423,9 +1423,9 @@ A prefix arg forces clock in of the default task."
 (setq org-clone-delete-id t)
 
 
-;; highlight parentheses
-(require 'highlight-parentheses)
-(highlight-parentheses-mode 1)
+;; ;; highlight parentheses
+;; (require 'highlight-parentheses)
+;; (highlight-parentheses-mode 1)
 
 ;; macro-math
 (autoload 'macro-math-eval-and-round-region "macro-math" t nil)
@@ -1434,43 +1434,43 @@ A prefix arg forces clock in of the default task."
 (global-set-key "\C-x~" 'macro-math-eval-and-round-region)
 (global-set-key "\C-x=" 'macro-math-eval-region)
 
-;; Recent file menu/opening from mastering emacs
-(require 'recentf)
+;; ;; Recent file menu/opening from mastering emacs
+;; (require 'recentf)
 
-;; get rid of `find-file-read-only' and replace it with something
-;; more useful.
-(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+;; ;; get rid of `find-file-read-only' and replace it with something
+;; ;; more useful.
+;; (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
 
-;; enable recent files mode.
-(recentf-mode t)
+;; ;; enable recent files mode.
+;; (recentf-mode t)
 
-; 100 files ought to be enough.
-(setq recentf-max-saved-items 100)
+;; ; 100 files ought to be enough.
+;; (setq recentf-max-saved-items 100)
 
-(defun ido-recentf-open ()
-  "Use `ido-completing-read' to \\[find-file] a recent file"
-  (interactive)
-  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-      (message "Opening file...")
-    (message "Aborting")))
-;; http://www.masteringemacs.org/articles/2011/01/27/find-files-faster-recent-files-package/
+;; (defun ido-recentf-open ()
+;;   "Use `ido-completing-read' to \\[find-file] a recent file"
+;;   (interactive)
+;;   (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+;;       (message "Opening file...")
+;;     (message "Aborting")))
+;; ;; http://www.masteringemacs.org/articles/2011/01/27/find-files-faster-recent-files-package/
 
-;; Give IDO mode a shot
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-(setq ido-use-filename-at-point 'guess)
-(setq ido-file-extensions-order '(".F90" ".f90" ".pbs" ".inp" ".sh" ".el" ".py" ".cmd" ".txt"))
-(setq ido-create-new-buffer 'prompt)
-;(setq ido-ignore-extensions t)
-;http://www.masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/
+;; ;; Give IDO mode a shot
+;; (setq ido-enable-flex-matching t)
+;; (setq ido-everywhere t)
+;; (ido-mode 1)
+;; (setq ido-use-filename-at-point 'guess)
+;; (setq ido-file-extensions-order '(".F90" ".f90" ".pbs" ".inp" ".sh" ".el" ".py" ".cmd" ".txt"))
+;; (setq ido-create-new-buffer 'prompt)
+;; ;(setq ido-ignore-extensions t)
+;; ;http://www.masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/
 
-;; better performance, maybe...
-(setq redisplay-dont-pause t)
-;http://www.masteringemacs.org/articles/2011/10/02/improving-performance-emacs-display-engine/
+;; ;; better performance, maybe...
+;; (setq redisplay-dont-pause t)
+;; ;http://www.masteringemacs.org/articles/2011/10/02/improving-performance-emacs-display-engine/
 
-(setq next-line-add-newlines t)
-;http://www.masteringemacs.org/articles/2011/01/14/effective-editing-movement/
+;; (setq next-line-add-newlines t)
+;; ;http://www.masteringemacs.org/articles/2011/01/14/effective-editing-movement/
 
 ;; better re-running & tweaking of commands
 (require 'eshell)
@@ -1489,56 +1489,56 @@ A prefix arg forces clock in of the default task."
 ;http://www.masteringemacs.org/articles/2011/03/25/working-multiple-files-dired/
 
 ;; Check for shebang magic in file after save, make executable if found.
-(setq my-shebang-patterns
-      (list "^#!/usr/.*/perl\\(\\( \\)\\|\\( .+ \\)\\)-w *.*"
-	    "^#!/usr/.*/sh"
-	    "^#!/usr/.*/bash"
-	    "^#!/usr/bin/env bash"
-	    "^#!/bin/sh"
-	    "^#!/bin/bash"
-	    "^#!/usr/bin/env python"
-	    "^#!/bin/sed -f"
-	    "^#!/bin/awk -f"
-	    "^#!/usr/bin/awk -f"))
-(add-hook
- 'after-save-hook
- (lambda ()
-   (if (not (= (shell-command (concat "test -x " (buffer-file-name))) 0))
-       (progn
-	 ;; This puts message in *Message* twice, but minibuffer
-	 ;; output looks better.
-	 (message (concat "Wrote " (buffer-file-name)))
-	 (save-excursion
-	   (goto-char (point-min))
-	   ;; Always checks every pattern even after
-	   ;; match.  Inefficient but easy.
-	   (dolist (my-shebang-pat my-shebang-patterns)
-	     (if (looking-at my-shebang-pat)
-		 (if (= (shell-command
-			 (concat "chmod u+x " (buffer-file-name)))
-			0)
-		     (message (concat
-			       "Wrote and made executable "
-			       (buffer-file-name))))))))
-     ;; This puts message in *Message* twice, but minibuffer output
-     ;; looks better.
-     (message (concat "Wrote " (buffer-file-name))))))
+;; (setq my-shebang-patterns
+;;       (list "^#!/usr/.*/perl\\(\\( \\)\\|\\( .+ \\)\\)-w *.*"
+;; 	    "^#!/usr/.*/sh"
+;; 	    "^#!/usr/.*/bash"
+;; 	    "^#!/usr/bin/env bash"
+;; 	    "^#!/bin/sh"
+;; 	    "^#!/bin/bash"
+;; 	    "^#!/usr/bin/env python"
+;; 	    "^#!/bin/sed -f"
+;; 	    "^#!/bin/awk -f"
+;; 	    "^#!/usr/bin/awk -f"))
+;; (add-hook
+;;  'after-save-hook
+;;  (lambda ()
+;;    (if (not (= (shell-command (concat "test -x " (buffer-file-name))) 0))
+;;        (progn
+;; 	 ;; This puts message in *Message* twice, but minibuffer
+;; 	 ;; output looks better.
+;; 	 (message (concat "Wrote " (buffer-file-name)))
+;; 	 (save-excursion
+;; 	   (goto-char (point-min))
+;; 	   ;; Always checks every pattern even after
+;; 	   ;; match.  Inefficient but easy.
+;; 	   (dolist (my-shebang-pat my-shebang-patterns)
+;; 	     (if (looking-at my-shebang-pat)
+;; 		 (if (= (shell-command
+;; 			 (concat "chmod u+x " (buffer-file-name)))
+;; 			0)
+;; 		     (message (concat
+;; 			       "Wrote and made executable "
+;; 			       (buffer-file-name))))))))
+;;      ;; This puts message in *Message* twice, but minibuffer output
+;;      ;; looks better.
+;;      (message (concat "Wrote " (buffer-file-name))))))
 
-;; enable visual feedback on selections
-(setq transient-mark-mode t)
+;; ;; enable visual feedback on selections
+;; (setq transient-mark-mode t)
 
-;; default to unified diffs
-(setq diff-switches "-u")
+;; ;; default to unified diffs
+;; (setq diff-switches "-u")
 
-(setq make-backup-files 'non-nil)
-(setq
-   backup-by-copying t       ; don't clobber symlinks
-   backup-directory-alist
-    '(("." . "~/.saves"))    ; don't litter my fs tree
-   delete-old-versions t
-   kept-new-versions 6
-   kept-old-versions 3
-   version-control t)
+;; (setq make-backup-files 'non-nil)
+;; (setq
+;;    backup-by-copying t       ; don't clobber symlinks
+;;    backup-directory-alist
+;;     '(("." . "~/.saves"))    ; don't litter my fs tree
+;;    delete-old-versions t
+;;    kept-new-versions 6
+;;    kept-old-versions 3
+;;    version-control t)
 
 ;; git interfaces
 ;(add-to-list 'load-path "~/.emacs.d/elpa/git-commit-mode-20140125.1553/")
@@ -1589,10 +1589,10 @@ A prefix arg forces clock in of the default task."
 (ac-set-trigger-key "TAB")
 (ac-set-trigger-key "<tab>")
 
-;; Smart TAB behaviour.
-(require 'smart-tab)
-(global-smart-tab-mode 1)
-(setq smart-tab-using-hippie-expand t)
+;; ;; Smart TAB behaviour.
+;; (require 'smart-tab)
+;; (global-smart-tab-mode 1)
+;; (setq smart-tab-using-hippie-expand t)
 
 ;; Hippie expand customizations
 (setq hippie-expand-try-functions-list
@@ -1646,21 +1646,21 @@ A prefix arg forces clock in of the default task."
     (ansi-color-apply-on-region compilation-filter-start (point-max))))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;;;;;;;;;;;;;;;;;;;;
-;; f90-mode stuff ;;
-;;;;;;;;;;;;;;;;;;;;
-;; Standard fortpy.el setting
-(add-hook 'f90-mode-hook
-          '(lambda ()
-	     (setq f90-beginning-ampersand nil)
-;;	     (f90-add-imenu-menu)
-	     (abbrev-mode 1)
-	     (column-number-mode t)
-	     (which-func-mode 1)
-	     (hide-ifdef-mode)
-	     ;; ('fortpy-setup)
-	     (flyspell-prog-mode)
-	     (highlight-parentheses-mode 1)))
+;; ;;;;;;;;;;;;;;;;;;;;
+;; ;; f90-mode stuff ;;
+;; ;;;;;;;;;;;;;;;;;;;;
+;; ;; Standard fortpy.el setting
+;; (add-hook 'f90-mode-hook
+;;           '(lambda ()
+;; 	     (setq f90-beginning-ampersand nil)
+;; ;;	     (f90-add-imenu-menu)
+;; 	     (abbrev-mode 1)
+;; 	     (column-number-mode t)
+;; 	     (which-func-mode 1)
+;; 	     (hide-ifdef-mode)
+;; 	     ;; ('fortpy-setup)
+;; 	     (flyspell-prog-mode)
+;; 	     (highlight-parentheses-mode 1)))
 ;; (setq fortpy-complete-on-percent t)
 ;; (setq fortpy-complete-on-bracket t)
 
@@ -1677,12 +1677,12 @@ A prefix arg forces clock in of the default task."
   (add-hook hook 'hideshowvis-enable))
 
 
-;;Cmake stuff
-(require 'cmake-mode)
-(setq auto-mode-alist
-      (append '(("CMakeLists\\.txt\\'" . cmake-mode)
-		("\\.cmake\\'" . cmake-mode))
-	      auto-mode-alist))
+;; ;;Cmake stuff
+;; (require 'cmake-mode)
+;; (setq auto-mode-alist
+;;       (append '(("CMakeLists\\.txt\\'" . cmake-mode)
+;; 		("\\.cmake\\'" . cmake-mode))
+;; 	      auto-mode-alist))
 
 ;; (autoload 'cmake-project-mode "cmake-project")
 ;; (defun maybe-cmake-project-hook ()
@@ -1691,10 +1691,10 @@ A prefix arg forces clock in of the default task."
 ;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
 ;;(add-hook 'f90-mode-hook 'maybe-cmake-project-hook)
 
-;; smart parens
-;(add-to-list 'load-path "~/.emacs.d/elpa/dash-20140214.321/")
-(require 'smartparens-config)
-(smartparens-global-mode t)
+;; ;; smart parens
+;; ;(add-to-list 'load-path "~/.emacs.d/elpa/dash-20140214.321/")
+;; (require 'smartparens-config)
+;; (smartparens-global-mode t)
 
 (setq gnus-nntp-server "news.eternal-september.org")
 (setq nntp-authinfo-function 'nntp-send-authinfo)
