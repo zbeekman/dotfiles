@@ -215,7 +215,7 @@
 ;;   (smartparens-global-mode t))
 
 (use-package smart-tab
-  :ensure cl-lib
+  :ensure t
   :commands (global-smart-tab-mode)
   :init
   (global-smart-tab-mode 1)
