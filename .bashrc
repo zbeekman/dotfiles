@@ -97,3 +97,6 @@ if [[ -f "${dsa_keys[0]}" ]]; then
     ssh-add "$k"
   done
 fi
+
+# Keep taucmdr from jamming up iTerm2 w/ it's fancy CPU meters
+__TAUCMDR_PROGRESS_BARS__="minimal"
