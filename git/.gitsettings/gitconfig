@@ -12,8 +12,8 @@
 	whitespace = trailing-space,space-before-tab,blank-at-eol,blank-at-eof
 	attributesfile = ~/.gitattributes_global
 	pager = less --tabs=4 -RFX
-[color]
-	ui = always
+# [color]
+# 	ui = always # This breaks git add --patch, no idea why
 [color "diff"]
 	meta = yellow bold
 	commit = green bold
@@ -129,8 +129,6 @@
 	clean = git lfs clean %f
 	smudge = git lfs smudge %f
 	required = true
-[gitopen "gitlab"]
-	domain = gitlab.umiacs.umd.edu
 [rebase]
 	autosquash = true
 [apply]
