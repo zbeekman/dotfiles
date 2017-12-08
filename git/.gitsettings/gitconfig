@@ -59,6 +59,8 @@
 	sb = status -sb
 	dsf = "!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy  | less --tabs=4 -RFX; }; f"
 	fap = fetch --all --prune
+	compare = log --left-right --graph --cherry-pick --oneline
+	cmpr = log --left-right --cherry-pick --abbrev-commit --decorate --oneline --no-merges
 [branch]
 	autosetupmerge = true
 [gui]
@@ -139,5 +141,6 @@
 	fsckObjects = true
 [fetch]
 	fsckObjects = true
+	prune = 1
 [receive]
 	fsckObjects = true
