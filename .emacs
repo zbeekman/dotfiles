@@ -61,6 +61,10 @@
   :if (eq system-type 'darwin)
   :ensure t)
 
+(use-package homebrew-mode
+  :if (eq system-type 'darwin)
+  :config (global-homebrew-mode))
+
 ;; Always use recentf
 
 ;; misc variables
@@ -304,6 +308,7 @@
 	     (which-func-mode 1)
 	     (hide-ifdef-mode)
 	     (flyspell-prog-mode)
+	     (electric-pair-mode)
 	     (highlight-parentheses-mode 1)))
 
 (custom-set-variables
