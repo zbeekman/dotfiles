@@ -109,6 +109,23 @@ extract() {
     fi
 }
 
+# Define a command to start an ssh SOCKS tunnel for proxying web traffic
+sshproxy() {
+    # shellcheck disable=SC2029
+    ssh -D "${2:-8181}" -f -C -q -N "${1}" &
+    export PROXY_TUNNELS="${PROXY_TUNNELS:-};${!}.${2:-8181}"
+}
+
+proxykill() {
+    LAST_PAIR="${PROXY_TUNNELS##*;}"
+    PROXY_PID="${LAST_PAIR%.*}"
+    if [[ -n "${PROXY_PID}" ]]; then
+	kill "${PROXY_PID}" > /dev/null 2>&1
+	PROXY_TUNNELS="${PROXY_TUNNELS%;*}"
+	export PROXY_TUNNELS
+    fi
+}
+
 # Fire up an ssh agent
 if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
   echo "ssh-agent running with pid $SSH_AGENT_PID"
