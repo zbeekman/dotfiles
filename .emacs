@@ -8,8 +8,6 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
 
 (setq use-package-verbose t) ; verbose init debug & profiling
@@ -27,8 +25,9 @@
 
 ;; Use the zenburn theme, but ONLY if we have a window system
 (setq custom-safe-themes
-      (quote
-       ("67e998c3c23fe24ed0fb92b9de75011b92f35d3e89344157ae0d544d50a63a72" default)))
+  (quote
+   ("599f1561d84229e02807c952919cd9b0fbaa97ace123851df84806b067666332" default)))
+
 (use-package zenburn-theme
   :if window-system
   :ensure t
@@ -62,6 +61,7 @@
   :ensure t)
 
 (use-package homebrew-mode
+  :ensure t
   :if (eq system-type 'darwin)
   :config (global-homebrew-mode))
 
@@ -209,14 +209,7 @@
 
 (use-package highlight-parentheses
   :ensure t
-  :commands (highlight-parentheses-mode)
-  :init (highlight-parentheses-mode 1))
-
-;; (use-package smartparens
-;;   :ensure t
-;;   :commands (smartparens-global-mode)
-;;   :init
-;;   (smartparens-global-mode t))
+  :init (global-highlight-parentheses-mode))
 
 (use-package smart-tab
   :ensure t
@@ -225,6 +218,33 @@
   (global-smart-tab-mode 1)
   (setq smart-tab-using-hippie-expand t))
 
+(use-package term
+  :ensure t
+  :bind
+  (:map term-mode-map
+	("M-p" . term-send-up)
+	("M-n" . term-send-down)
+   :map term-raw-map
+        ("M-o" . other-window)
+	("M-p" . term-send-up)
+	("M-n" . term-send-down)))
+
+(use-package bug-reference-github
+  :ensure t
+  :init
+  (add-hook 'find-file-hook 'bug-reference-github-set-url-format)
+  (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
+  )
+
+(use-package gh
+  :ensure t
+  :defer t)
+
+(use-package git-messenger
+  :ensure t)
+
+(use-package github-browse-file
+  :ensure t)
 
 
 ;; Recent file menu/opening from mastering emacs
@@ -304,12 +324,15 @@
 	     (setq f90-beginning-ampersand nil)
 	     (f90-add-imenu-menu)
 ;;	     (abbrev-mode 1)
+	     (hide-ifdef-mode)
+	     ))
+
+(add-hook 'prog-mode-hook
+	  '(lambda ()
 	     (column-number-mode t)
 	     (which-func-mode 1)
-	     (hide-ifdef-mode)
 	     (flyspell-prog-mode)
-	     (electric-pair-mode)
-	     (highlight-parentheses-mode 1)))
+	     (electric-pair-mode)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
