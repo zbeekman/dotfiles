@@ -10,8 +10,9 @@ if [ -d "/usr/local/bin" ]; then
 fi
 if [ -d "${HOME}/.jenv/bin" ]; then
   export PATH="${HOME}/.jenv/bin:${PATH}"
+  eval "$(jenv init -)" || true
 fi
-eval "$(jenv init -)" || true
+
 if [ -d "/usr/local/sbin" ]; then
   export PATH="/usr/local/sbin:${PATH}"
 fi
