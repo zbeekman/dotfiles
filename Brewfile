@@ -24,8 +24,6 @@ brew "sqlite"
 brew "aircrack-ng"
 # Strip or convert ANSI codes into HTML, (La)Tex, RTF, or BBCode
 brew "ansifilter"
-# Download with resuming and segmented downloading
-brew "aria2"
 # Integer Set Library for the polyhedral model
 brew "isl"
 # GNU compiler collection
@@ -64,16 +62,12 @@ brew "bundler-completion"
 brew "numpy"
 # Open source computer vision library
 brew "opencv@2"
-# Makes motion interpolated and fluid slow motion videos
-brew "butterflow"
 # Object-file caching compiler wrapper
 brew "ccache"
 # Like cat but displays content with syntax highlighting
 brew "ccat"
 # File format designed to store large amounts of data
 brew "hdf5"
-# CFD General Notation System
-brew "cgns", args: ["with-fortran"]
 # Create and view interactive cheat sheets for *nix commands
 brew "cheat"
 # Checks for bashisms in shell scripts
@@ -322,8 +316,6 @@ brew "mpich", args: ["HEAD"], link: false
 brew "multimarkdown", link: false
 # Libraries and data formats for array-oriented scientific data
 brew "netcdf"
-# Nonequispaced fast Fourier transform
-brew "nfft"
 # Small build system for use with gyp or CMake
 brew "ninja"
 # Tools for one-time password authentication systems
@@ -358,8 +350,6 @@ brew "packer-completion"
 brew "pandoc"
 # Extract just secret information out of OpenPGP secret keys
 brew "paperkey"
-# MPI-based library for graph/mesh partitioning and computing fill-reducing orderings
-brew "parmetis", link: false
 # Small collection of programs that operate on patch files
 brew "patchutils"
 # Middleware to access a smart card using SCard API
@@ -470,8 +460,6 @@ brew "uncrustify"
 brew "unrar"
 # Bash completion for Vagrant
 brew "vagrant-completion"
-# Dynamic analysis tools (memory, debug, profiling)
-brew "valgrind"
 # Vagrant Host-Guest SSH Command Wrapper/Proxy/Forwarder
 brew "vassh"
 # Vi 'workalike' with many additional features
@@ -548,7 +536,6 @@ brew "sourceryinstitute/formulae/psblas", link: false
 brew "vitorgalvao/tiny-scripts/cask-repair"
 brew "yudai/gotty/gotty"
 cask "adobe-acrobat-reader"
-cask "amidst"
 cask "anylist"
 cask "argouml"
 cask "asciidocfx"
@@ -566,14 +553,13 @@ cask "gitter"
 cask "google-chrome"
 cask "google-hangouts"
 cask "google-web-designer"
-cask "gpgtools"
+cask "gpg-suite"
 cask "hyper"
 cask "imagealpha"
 cask "imageoptim"
 cask "kextviewr"
 cask "keybase"
 cask "kindle"
-cask "knockknock"
 cask "lyx"
 cask "macdependency"
 cask "mactex"
@@ -597,7 +583,6 @@ cask "qr-journal"
 cask "quicklook-csv"
 cask "quicklook-json"
 cask "ransomwhere"
-cask "screenhero"
 cask "silverlight"
 cask "skim"
 cask "skype"
@@ -606,7 +591,6 @@ cask "spotify"
 cask "suspicious-package"
 cask "taskexplorer"
 cask "tidal"
-cask "transmission"
 cask "tunnelblick"
 cask "uncrustifyx"
 cask "unison"
@@ -617,7 +601,6 @@ cask "virtualbox-extension-pack"
 cask "webpquicklook"
 cask "wireshark"
 cask "yed"
-cask "yubikey-personalization-gui"
 cask "caskroom/drivers/yubico-authenticator"
 cask "caskroom/fonts/font-fira-code"
 cask "caskroom/versions/atom-beta"
@@ -630,8 +613,8 @@ mas "CCMenu", id: 603117688
 mas "Disk Aid", id: 1007358832
 mas "Disk Doctor", id: 455970963
 mas "Duplicate Detective", id: 686428787
-mas "Install OS X El Capitan", id: 1018109117
-mas "Install OS X El Capitan", id: 1018109117
+# mas "Install OS X El Capitan", id: 1018109117
+# mas "Install OS X El Capitan", id: 1018109117
 mas "JPEGmini", id: 498944723
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
