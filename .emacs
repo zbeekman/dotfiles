@@ -68,6 +68,10 @@
   :if (eq system-type 'darwin)
   :config (global-homebrew-mode))
 
+
+(use-package travis
+  :ensure t)
+
 ;; Always use recentf
 
 ;; misc variables
