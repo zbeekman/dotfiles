@@ -151,13 +151,17 @@ shopt -s cmdhist
 shopt -s histappend
 shopt -u histreedit
 
+
+export LP_PS1_PREFIX='\[\e]0;\h:\W\]'
+
 # Use iTerm shell integration
 if [[ -f "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")" && "${TERM}" =~ "xterm" ]]; then
   # shellcheck source=/Users/ibeekman/.iterm2_shell_integration.bash
   . "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")"
-  LP_PS1_PREFIX="\\[$(iterm2_prompt_mark)\\]"
+  LP_PS1_PREFIX="${LP_PS1_PREFIX}\\[$(iterm2_prompt_mark)\\]"
   export LP_PS1_PREFIX
 fi
+
 
 # Use Bash completion, if installed
 # shellcheck disable=SC1091
