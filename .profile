@@ -60,7 +60,7 @@ export LESS_TERMCAP_ue
 # Enable syntax-highlighting in less.
 # brew install source-highlight
 # First, add these two lines to ~/.bashrc
-LESSOPEN="| $(which highlight) %s --out-format xterm256 --quiet --force --style candy"
+LESSOPEN="| $(which highlight > /dev/null 2>&1) %s --out-format xterm256 --quiet --force --style candy"
 export LESSOPEN
 export LESS=" -i -R -J "
 alias less='less -i -F -X -M -N -J'
