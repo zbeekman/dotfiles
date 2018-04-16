@@ -12,8 +12,8 @@
 }
 
 # Keep taucmdr from jamming up iTerm2 w/ it's fancy CPU meters
-__TAUCMDR_PROGRESS_BARS__="minimal"
-export __TAUCMDR_PROGRESS_BARS__
+# __TAUCMDR_PROGRESS_BARS__="disable"
+# export __TAUCMDR_PROGRESS_BARS__
 
 if [[ $OSTYPE == [Dd]arwin* ]]; then
   compilervars () {

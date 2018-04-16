@@ -81,7 +81,7 @@ fi
 
 export PATH="${PATH}:${GOPATH}/bin"
 
-export __TAUCMDR_PROGRESS_BARS__="minimal"
+#export __TAUCMDR_PROGRESS_BARS__="minimal"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 [ -d "${HOME}/.rvm/bin" ] && export PATH="${PATH}:${HOME}/.rvm/bin"
