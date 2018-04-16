@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 # Use the system config if it exists
 
 # shellcheck disable=SC1091
@@ -42,7 +43,7 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
   }
 fi
 
-if ! (echo ${PATH} | grep "/usr/local/bin" > /dev/null 2>&1) && [[ -d "/usr/local/bin" ]]; then
+if ! (echo "${PATH}" | grep "/usr/local/bin" > /dev/null 2>&1) && [[ -d "/usr/local/bin" ]]; then
   export PATH="/usr/local/bin:${PATH}"
 fi
 
@@ -83,10 +84,10 @@ if type -P qstat > /dev/null 2>&1 ; then
 
     subjob () {
         set -o pipefail
-        JID=$(qsub $@ | cut -d '.' -f 1)
+        JID=$(qsub "${@}" | cut -d '.' -f 1)
         _ret=$?
-        JIDARR=($JID ${JIDARR[@]}) # push job id onto stack
-        echo $JID
+        JIDARR=("${JID}" "${JIDARR[@]}") # push job id onto stack
+        echo "${JID}"
         export JID
         export JIDARR
         set +o pipefail
@@ -95,9 +96,9 @@ if type -P qstat > /dev/null 2>&1 ; then
 
     killastjob () {
         set -o pipefail
-        qdel $JID
-        _ret=$?
-        JIDARR=(${JIDARR[@]//$JID/}) # filter out job id, pop stack
+        qdel "${JID}"
+        _ret="${?}"
+        JIDARR=("${JIDARR[@]//$JID/}") # filter out job id, pop stack
         JID=${JIDARR[0]}
         export JIDARR
         export JID
@@ -108,8 +109,8 @@ if type -P qstat > /dev/null 2>&1 ; then
     afterjob () {
         set -o pipefail
         if [[ -n "$JID" ]]; then
-            subjob -W depend=afterany:${JID} $@
-            _ret=$?
+            subjob -W depend="afterany:${JID}" "${@}"
+            _ret=${?}
             export JID
             export JIDARR
         else
@@ -120,12 +121,12 @@ if type -P qstat > /dev/null 2>&1 ; then
     }
 
     peekjob () {
-        qpeek ${JIDARR[${1:-0}]}
+        qpeek "${JIDARR[${1:-0}]}"
     }
 
     killjarray () {
-        for j in ${JIDARR[@]}; do
-            qdel $f
+        for j in "${JIDARR[@]}"; do
+            qdel "${j}"
         done
         unset JIDARR
     }
@@ -167,12 +168,13 @@ fi
 
 # Use Liquid Prompt
 if [[ -f "${HOME}/dotfiles/liquidprompt/liquidprompt" ]] ; then
+  # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
   source "${HOME}/dotfiles/liquidprompt/liquidprompt"
 elif [[ -f "/usr/local/share/liquidprompt" ]] ; then
   source "/usr/local/share/liquidprompt"
 fi
 
-type -P liquidprompt_activate 2>&1 >/dev/null && liquidprompt_activate
+type -P liquidprompt_activate >/dev/null 2>&1 && liquidprompt_activate
 
 # Homebrew command not found
 if brew command command-not-found-init >/dev/null 2>&1; then
@@ -224,6 +226,7 @@ fi
 if [[ -d "${HOME}/.secrets/tokens" ]]; then
     for token in ${HOME}/.secrets/tokens/* ; do
 	echo "sourcing file $token"
+	# shellcheck disable=SC1090
 	source "$token"
     done
 fi

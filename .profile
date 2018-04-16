@@ -1,6 +1,6 @@
 # shellcheck shell=sh
-type -P emacs > /dev/null 2>&1 && export EDITOR="emacs -nw"
-type -P less > /dev/null 2>&1 && export PAGER=less
+which emacs > /dev/null 2>&1 && export EDITOR="emacs -nw"
+which less > /dev/null 2>&1 && export PAGER=less
 if [ -d "${WORKDIR}" ]; then # DSRCs
   export TMPDIR="${WORKDIR}/tmp"
   export TMP="${WORKDIR}/tmp"
@@ -60,15 +60,13 @@ export LESS_TERMCAP_ue
 # Enable syntax-highlighting in less.
 # brew install source-highlight
 # First, add these two lines to ~/.bashrc
-export LESSOPEN="| $(type -P highlight) %s --out-format xterm256 --quiet --force --style candy"
+LESSOPEN="| $(which highlight) %s --out-format xterm256 --quiet --force --style candy"
+export LESSOPEN
 export LESS=" -i -R -J "
 alias less='less -i -F -X -M -N -J'
 alias more='less'
-alias show="highlight $@ --out-format xterm256 --line-numbers --quiet --force --style candy"
+#alias show="highlight $@ --out-format xterm256 --line-numbers --quiet --force --style candy"
 
-
-# shellcheck source=/Users/ibeekman/.secrets/tokens
-test -e "${HOME}/.secrets/tokens" && . "${HOME}/.secrets/tokens"
 
 if [ "$(basename "${SHELL}")" = "bash" ]; then
   # shellcheck source=/Users/ibeekman/.bashrc
@@ -88,8 +86,9 @@ export __TAUCMDR_PROGRESS_BARS__="minimal"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 [ -d "${HOME}/.rvm/bin" ] && export PATH="${PATH}:${HOME}/.rvm/bin"
 
-[ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+# shellcheck disable=SC1091
+[ -s "$HOME/.rvm/scripts/rvm" ] && . "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-type -P asciinema > /dev/null 2>&1 && alias asciinema="LC_ALL=en_IN.UTF-8 asciinema"
+which asciinema > /dev/null 2>&1 && alias asciinema="LC_ALL=en_IN.UTF-8 asciinema"
 
 [ -d "/p/work/sameer/ff/firefox" ] && export PATH="/p/work/sameer/ff/firefox:${PATH}"
