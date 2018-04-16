@@ -8,7 +8,7 @@ if [ ! ${#} -ge 2 ]; then
 fi
 
 # tools
-_EMACSCLIENT=Emacs
+_EMACSCLIENT=emacs
 _BASENAME=/usr/bin/basename
 _CP=/bin/cp
 _EGREP=/usr/bin/egrep
