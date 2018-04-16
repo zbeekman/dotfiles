@@ -2,3 +2,6 @@
 	path = ssh
 	url = git@github.com:zbeekman/ssh-config.git
 	ignore = untracked
+[submodule "liquidprompt"]
+	path = liquidprompt
+	url = https://github.com/nojhan/liquidprompt.git

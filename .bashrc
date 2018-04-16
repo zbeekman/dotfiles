@@ -10,35 +10,41 @@
   fi
 }
 
-compilervars () {
+# Keep taucmdr from jamming up iTerm2 w/ it's fancy CPU meters
+__TAUCMDR_PROGRESS_BARS__="minimal"
+export __TAUCMDR_PROGRESS_BARS__
+
+if [[ $OSTYPE == [Dd]arwin* ]]; then
+  compilervars () {
     compilers=(
-	gfortran
-	gcc
-	g++
+       gfortran
+       gcc
+       g++
     )
     for major_version in {9,8,7,6,5}; do
-	echo "Looking for gcc-$major_version"
-	for compiler in "${compilers[@]}"; do
-	    if ! type -P "${compiler}-${major_version}" >/dev/null 2>&1 ; then
-		echo "Not found" # try next lower maj version
-		continue 2
-	    fi
-	done
-	# have all 3 compilers
-	FC="$(type -P gfortran-${major_version})"
-	CC="$(type -P gcc-${major_version})"
-	CXX="$(type -P g++-${major_version})"
-	export FC
-	export CC
-	export CXX
-	echo "FC=$FC CC=$CC CXX=$CXX"
-	break
+       echo "Looking for gcc-$major_version"
+       for compiler in "${compilers[@]}"; do
+         if ! type -P "${compiler}-${major_version}" >/dev/null 2>&1 ; then
+           echo "Not found" # try next lower maj version
+           continue 2
+         fi
+       done
+       # have all 3 compilers
+       FC="$(type -P gfortran-${major_version})"
+       CC="$(type -P gcc-${major_version})"
+       CXX="$(type -P g++-${major_version})"
+       export FC
+       export CC
+       export CXX
+       echo "FC=$FC CC=$CC CXX=$CXX"
+       break
     done
-}
+  }
+fi
 
-if [ -d "/usr/local/bin" ]; then
+if ! (echo ${PATH} | grep "/usr/local/bin" > /dev/null 2>&1) && [[ -d "/usr/local/bin" ]]; then
   export PATH="/usr/local/bin:${PATH}"
-fi # ensure mosh on path
+fi
 
 free_mosh () {
     for d in $(brew --cellar mosh)/* ; do
@@ -46,6 +52,89 @@ free_mosh () {
 	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${d}/bin/mosh-server"
     done
 }
+
+# mkcd: mkdir and cd into it
+mkcd () { mkdir -p "$@" && eval cd "\"\$$#\""; }
+
+# extract: untar all the things
+extract() {
+    if [[ -f "$1" ]]; then
+        case "$1" in
+            *.tar.bz2)   tar xvjf "$1"    ;;
+            *.tar.gz)    tar xvzf "$1"    ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xvf "$1"     ;;
+            *.tbz2)      tar xvjf "$1"    ;;
+            *.tgz)       tar xvzf "$1"    ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)           echo "I don't know how to extract \\'$1\\'..." ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
+}
+
+if type -P qstat > /dev/null 2>&1 ; then
+    alias qme='qstat -u ${USER}'
+
+    subjob () {
+        set -o pipefail
+        JID=$(qsub $@ | cut -d '.' -f 1)
+        _ret=$?
+        JIDARR=($JID ${JIDARR[@]}) # push job id onto stack
+        echo $JID
+        export JID
+        export JIDARR
+        set +o pipefail
+        return $_ret
+    }
+
+    killastjob () {
+        set -o pipefail
+        qdel $JID
+        _ret=$?
+        JIDARR=(${JIDARR[@]//$JID/}) # filter out job id, pop stack
+        JID=${JIDARR[0]}
+        export JIDARR
+        export JID
+        set +o pipefail
+        return $_ret
+    }
+
+    afterjob () {
+        set -o pipefail
+        if [[ -n "$JID" ]]; then
+            subjob -W depend=afterany:${JID} $@
+            _ret=$?
+            export JID
+            export JIDARR
+        else
+            echo "\$JID is empty, can't chain from unkown job!" >&2
+            return 100
+        fi
+        return $_ret
+    }
+
+    peekjob () {
+        qpeek ${JIDARR[${1:-0}]}
+    }
+
+    killjarray () {
+        for j in ${JIDARR[@]}; do
+            qdel $f
+        done
+        unset JIDARR
+    }
+fi
+
+if type -P module > /dev/null 2>&1 ; then
+    [ -d "${PET_HOME}/modules" ] && module use --append "${PET_HOME}/modules"
+    [ -d "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx" ] && module use --append "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx"
+fi
 
 # The following lines are only for interactive shells
 [[ $- == *i* ]] || return
@@ -77,38 +166,18 @@ fi
 }
 
 # Use Liquid Prompt
-[ -f /usr/local/share/liquidprompt ] && . /usr/local/share/liquidprompt
+if [[ -f "${HOME}/dotfiles/liquidprompt/liquidprompt" ]] ; then
+  source "${HOME}/dotfiles/liquidprompt/liquidprompt"
+elif [[ -f "/usr/local/share/liquidprompt" ]] ; then
+  source "/usr/local/share/liquidprompt"
+fi
+
 type -P liquidprompt_activate 2>&1 >/dev/null && liquidprompt_activate
 
 # Homebrew command not found
 if brew command command-not-found-init >/dev/null 2>&1; then
   eval "$(brew command-not-found-init)"
 fi
-
-# mkcd: mkdir and cd into it
-mkcd () { mkdir -p "$@" && eval cd "\"\$$#\""; }
-
-# extract: untar all the things
-extract() {
-    if [[ -f "$1" ]]; then
-        case "$1" in
-            *.tar.bz2)   tar xvjf "$1"    ;;
-            *.tar.gz)    tar xvzf "$1"    ;;
-            *.bz2)       bunzip2 "$1"     ;;
-            *.rar)       unrar x "$1"     ;;
-            *.gz)        gunzip "$1"      ;;
-            *.tar)       tar xvf "$1"     ;;
-            *.tbz2)      tar xvjf "$1"    ;;
-            *.tgz)       tar xvzf "$1"    ;;
-            *.zip)       unzip "$1"       ;;
-            *.Z)         uncompress "$1"  ;;
-            *.7z)        7z x "$1"        ;;
-            *)           echo "I don't know how to extract \\'$1\\'..." ;;
-        esac
-    else
-        echo "'$1' is not a valid file!"
-    fi
-}
 
 # Define a command to start an ssh SOCKS tunnel for proxying web traffic
 sshproxy() {
@@ -148,10 +217,6 @@ if [[ -f "${dsa_keys[0]}" ]]; then
   done
 fi
 
-# Keep taucmdr from jamming up iTerm2 w/ it's fancy CPU meters
-__TAUCMDR_PROGRESS_BARS__="minimal"
-export __TAUCMDR_PROGRESS_BARS__
-
 # added by travis gem
 [ -f /Users/ibeekman/.travis/travis.sh ] && source /Users/ibeekman/.travis/travis.sh
 
@@ -164,10 +229,7 @@ if [[ -d "${HOME}/.secrets/tokens" ]]; then
 fi
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-
-# Only load liquidprompt in interactive shells, not from a script or from scp
-echo $- | grep -q i 2>/dev/null && . /usr/share/liquidprompt/liquidprompt
+[[ -d "${HOME}/.rvm/bin" ]] && export PATH="$PATH:$HOME/.rvm/bin"
 
 # Set OVPN store
 export OVPN_DATA=ovpn-data-PT-EAST

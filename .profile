@@ -1,4 +1,13 @@
 # shellcheck shell=sh
+type -P emacs > /dev/null 2>&1 && export EDITOR="emacs -nw"
+type -P less > /dev/null 2>&1 && export PAGER=less
+if [ -d "${WORKDIR}" ]; then # DSRCs
+  export TMPDIR="${WORKDIR}/tmp"
+  export TMP="${WORKDIR}/tmp"
+fi
+if [ -d "${HOME}/.local/bin" ]; then
+  export PATH="${HOME}/.local/bin:${PATH}"
+fi
 export CTEST_OUTPUT_ON_FAILURE=1
 #export VAGRANT_SERVER_URL="https://sourceryinstitute-vagrant-Sourcery-Institute-Lubuntu-VM.bintray.io"
 export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
@@ -13,10 +22,8 @@ if [ -d "${HOME}/.jenv/bin" ]; then
   eval "$(jenv init -)" || true
 fi
 
-if [ -d "/usr/local/sbin" ]; then
-  export PATH="/usr/local/sbin:${PATH}"
-fi
-[ -d /usr/local/opt/go ] && export GOROOT=/usr/local/opt/go
+[ -d "/usr/local/sbin" ] && export PATH="/usr/local/sbin:${PATH}"
+[ -d "/usr/local/opt/go" ] && export GOROOT="/usr/local/opt/go"
 [ -d "${HOME}/go" ] && export GOPATH="${HOME}/go"
 export CLICOLOR=1
 export GREP_COLORS="fn=34:mt=01;34:ln=01;30:se=30"
@@ -74,11 +81,15 @@ else
   export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 fi
 
-export PATH=$PATH:$GOPATH/bin
+export PATH="${PATH}:${GOPATH}/bin"
 
 export __TAUCMDR_PROGRESS_BARS__="minimal"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+[ -d "${HOME}/.rvm/bin" ] && export PATH="${PATH}:${HOME}/.rvm/bin"
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+[ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+type -P asciinema > /dev/null 2>&1 && alias asciinema="LC_ALL=en_IN.UTF-8 asciinema"
+
+[ -d "/p/work/sameer/ff/firefox" ] && export PATH="/p/work/sameer/ff/firefox:${PATH}"
