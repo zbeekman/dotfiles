@@ -11,6 +11,17 @@
   fi
 }
 
+# Fix TMPDIR to point to a suitable location
+if [ -z "${TMPDIR}" ] ; then
+    if [ -d "${WORKDIR}" ] ; then
+	export TMPDIR="${WORKDIR}/tmp"
+    elif [ -d "/tmp" ] ; then
+	export TMPDIR=/tmp
+    fi
+elif [[ ! "${TMPDIR}" =~ "/tmp/?$" ]] ; then
+    export TMPDIR="${TMPDIR%/}/tmp"
+fi
+
 # Keep taucmdr from jamming up iTerm2 w/ it's fancy CPU meters
 # __TAUCMDR_PROGRESS_BARS__="disable"
 # export __TAUCMDR_PROGRESS_BARS__
@@ -152,7 +163,7 @@ shopt -s histappend
 shopt -u histreedit
 
 
-export LP_PS1_PREFIX='\[\e]0;\h:\W\a\]'
+#export LP_PS1_PREFIX='\[\e]0;\h:\W\a\]'
 
 # Use iTerm shell integration
 if [[ -f "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")" && "${TERM}" =~ "xterm" ]]; then
