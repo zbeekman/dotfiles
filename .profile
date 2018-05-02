@@ -60,12 +60,15 @@ export LESS_TERMCAP_ue
 # Enable syntax-highlighting in less.
 # brew install source-highlight
 # First, add these two lines to ~/.bashrc
-LESSOPEN="| $(which highlight > /dev/null 2>&1) %s --out-format xterm256 --quiet --force --style candy"
+if which highlight > /dev/null 2>&1 ; then # we have highlight on the path
+  LESSOPEN="| $(which highlight) %s --out-format xterm256 --quiet --force --style candy"
+  alias show="highlight $@ --out-format xterm256 --line-numbers --quiet --force --style candy"
+fi
 export LESSOPEN
 export LESS=" -i -R -J "
 alias less='less -i -F -X -M -N -J'
 alias more='less'
-#alias show="highlight $@ --out-format xterm256 --line-numbers --quiet --force --style candy"
+
 
 
 if [ "$(basename "${SHELL}")" = "bash" ]; then

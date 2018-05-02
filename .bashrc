@@ -151,6 +151,8 @@ fi
 # The following lines are only for interactive shells
 [[ $- == *i* ]] || return
 
+resize # make sure the terminal is set correctly
+
 # If a hashed command no longer exists, a normal path search is performed.
 shopt -u checkhash
 
@@ -166,30 +168,35 @@ shopt -u histreedit
 #export LP_PS1_PREFIX='\[\e]0;\h:\W\a\]'
 
 # Use iTerm shell integration
-if [[ -f "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")" && "${TERM}" =~ "xterm" ]]; then
-  # shellcheck source=/Users/ibeekman/.iterm2_shell_integration.bash
-  . "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")"
-  LP_PS1_PREFIX="${LP_PS1_PREFIX}\\[$(iterm2_prompt_mark)\\]"
-  export LP_PS1_PREFIX
+if [[ "${OSTYPE}" = [Dd]arwin* ]]; then
+  if [[ -f "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")" && "${TERM}" =~ "xterm" ]]; then
+    # shellcheck source=/Users/ibeekman/.iterm2_shell_integration.bash
+    source "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")"
+    LP_PS1_PREFIX="${LP_PS1_PREFIX}\\[$(iterm2_prompt_mark)\\]"
+    export LP_PS1_PREFIX
+  fi
 fi
 
 
 # Use Bash completion, if installed
 # shellcheck disable=SC1091
 {
-  [ -f /etc/bash_completion ] && . /etc/bash_completion
-  [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+  [[ -f /etc/bash_completion ]] && source /etc/bash_completion
+  [[ -f /usr/local/etc/bash_completion ]] && source /usr/local/etc/bash_completion
 }
 
 # Use Liquid Prompt
-if [[ -f "${HOME}/dotfiles/liquidprompt/liquidprompt" ]] ; then
-  # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
-  source "${HOME}/dotfiles/liquidprompt/liquidprompt"
-elif [[ -f "/usr/local/share/liquidprompt" ]] ; then
-  source "/usr/local/share/liquidprompt"
+if [[ -z "${LP_SET:-}" ]] ; then
+  # liquid prompt not yet enabled
+  if [[ -f "${HOME}/dotfiles/liquidprompt/liquidprompt" ]] ; then
+    # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
+    source "${HOME}/dotfiles/liquidprompt/liquidprompt"
+    export LP_SET="yes"
+  elif [[ -f "/usr/local/share/liquidprompt" ]] ; then
+    source "/usr/local/share/liquidprompt"
+    export LP_SET="yes"
+  fi
 fi
-
-type -P liquidprompt_activate >/dev/null 2>&1 && liquidprompt_activate
 
 # Homebrew command not found
 if brew command command-not-found-init >/dev/null 2>&1; then
@@ -223,13 +230,6 @@ fi
 rsa_keys=("${HOME}"/.ssh/*_rsa)
 if [[ -f "${rsa_keys[0]}" ]]; then
   for k in "${rsa_keys[@]}" ; do
-    ssh-add "$k"
-  done
-fi
-
-dsa_keys=("${HOME}"/.ssh/*_dsa)
-if [[ -f "${dsa_keys[0]}" ]]; then
-  for k in "${dsa_keys[@]}" ; do
     ssh-add "$k"
   done
 fi
