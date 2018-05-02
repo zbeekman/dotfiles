@@ -185,6 +185,9 @@ fi
   [[ -f /usr/local/etc/bash_completion ]] && source /usr/local/etc/bash_completion
 }
 
+if [[ "$(hostname)" = [Oo]nyx* ]]; then
+  export LP_MARK_GIT="\[-+\]"
+fi
 # Use Liquid Prompt
 if [[ -z "${LP_SET:-}" ]] ; then
   # liquid prompt not yet enabled
