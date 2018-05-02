@@ -1,4 +1,9 @@
 # shellcheck shell=sh
+
+if [ "`uname`" = "Linux" ] ; then
+    setxkbmap -layout us -option ctrl:nocaps
+fi
+
 which emacs > /dev/null 2>&1 && export EDITOR="emacs -nw"
 which less > /dev/null 2>&1 && export PAGER=less
 if [ -d "${WORKDIR}" ]; then # DSRCs
