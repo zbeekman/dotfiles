@@ -332,8 +332,6 @@ brew "octave"
 brew "open-completion"
 # Optimized BLAS library
 brew "openblas"
-# Open-source coarray Fortran ABI, API, and compiler wrapper
-brew "opencoarrays", args: ["HEAD"]
 # Open source computer vision library
 brew "opencv"
 # Tools and libraries for smart cards
@@ -518,8 +516,6 @@ brew "dunn/emacs/magit"
 brew "dunn/emacs/markdown-mode"
 # Notes, TODOs, and project planning for Emacs
 brew "dunn/emacs/org-mode"
-# Emacs support library for PDF files
-brew "dunn/emacs/pdf-tools"
 # Color delimiters by depth in Emacs
 brew "dunn/emacs/rainbow-delimiters"
 # Minor mode for Emacs that deals with parens pairs
