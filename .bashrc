@@ -236,24 +236,18 @@ proxykill() {
 }
 
 # Fire up an ssh agent
-if ! [[ "$(hostname)" = [Oo]nyx* ]]; then
-    if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
-	echo "ssh-agent running with pid $SSH_AGENT_PID"
-    else
-	eval "$(ssh-agent -s)"
-    fi
-fi
-
 if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
-    ssh-add
+    echo "ssh-agent running with pid $SSH_AGENT_PID"
+else
+    eval "$(ssh-agent -s)"
+    echo "Started ssh-agent with pid $SSH_AGENT_PID"
 fi
 
-# rsa_keys=("${HOME}"/.ssh/*_rsa)
-# if [[ -f "${rsa_keys[0]}" ]]; then
-#   for k in "${rsa_keys[@]}" ; do
-#     ssh-add "$k"
-#   done
-# fi
+# If an agent is running...which it should be
+if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+    # and if we haven't added the default keys...
+    ssh-add -l &> /dev/null || ssh-add || echo "Could not add keys to ssh-agent."
+fi
 
 # added by travis gem
 [ -f /Users/ibeekman/.travis/travis.sh ] && source /Users/ibeekman/.travis/travis.sh
