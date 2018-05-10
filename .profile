@@ -1,5 +1,9 @@
 # shellcheck shell=sh
 
+# Make sure that we don't source .profile more than once
+[ -z "${DOT_PROFILE_SOURCED}" ] || return
+export DOT_PROFILE_SOURCED="yes"
+
 if [ "`uname`" = "Linux" ] ; then
     setxkbmap -layout us -option ctrl:nocaps
 fi
@@ -12,6 +16,9 @@ if [ -d "${WORKDIR}" ]; then # DSRCs
 fi
 if [ -d "${HOME}/.local/bin" ]; then
   export PATH="${HOME}/.local/bin:${PATH}"
+fi
+if [ -d "${HOME}/taucmdr/bin" ]; then
+  export PATH="${HOME}/taucmdr/bin:${PATH}"
 fi
 export CTEST_OUTPUT_ON_FAILURE=1
 #export VAGRANT_SERVER_URL="https://sourceryinstitute-vagrant-Sourcery-Institute-Lubuntu-VM.bintray.io"
@@ -78,7 +85,7 @@ alias more='less'
 
 
 
-if [ "$(basename "${SHELL}")" = "bash" ]; then
+if [ "$(basename "${SHELL}")" = "bash" ] && [ -z "${DOT_BASHRC_SOURCED}" ]; then
   # shellcheck source=/Users/ibeekman/.bashrc
   [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
 fi

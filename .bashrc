@@ -2,14 +2,24 @@
 # shellcheck shell=bash
 # Use the system config if it exists
 
-# shellcheck disable=SC1091
-{
-  if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
-  elif [ -f /etc/bash.bashrc ]; then
-    . /etc/bash.bashrc
-  fi
-}
+module load cray-shmem
+
+if [[ -z "${ETC_BASHRC_SOURCED:-}" ]] ; then
+  # prevent infinite loops ~/.bashrc -> /etc/bashrc -> ~/.bashrc -> ... etc.
+  export ETC_BASHRC_SOURCE="yes"
+  # shellcheck disable=SC1091
+  {
+    if [ -f /etc/bashrc ]; then
+      . /etc/bashrc
+    elif [ -f /etc/bash.bashrc ]; then
+      . /etc/bash.bashrc
+    fi
+  }
+fi
+
+# Don't source .bashrc more than once
+[[ -z "${DOT_BASHRC_SOURCED:-}" ]] || return
+export DOT_BASHRC_SOURCED="yes"
 
 # Fix TMPDIR to point to a suitable location
 if [ -z "${TMPDIR}" ] ; then
@@ -151,7 +161,7 @@ fi
 # The following lines are only for interactive shells
 [[ $- == *i* ]] || return
 
-resize # make sure the terminal is set correctly
+resize # make sure the terminal knows how big it is
 
 # If a hashed command no longer exists, a normal path search is performed.
 shopt -u checkhash
@@ -187,6 +197,8 @@ fi
 
 if [[ "$(hostname)" = [Oo]nyx* ]]; then
   export LP_MARK_GIT="\[-+\]"
+  # module swap PrgEnv-cray PrgEnv-intel
+  # module load cray-shmem
 fi
 # Use Liquid Prompt
 if [[ -z "${LP_SET:-}" ]] ; then
@@ -224,18 +236,24 @@ proxykill() {
 }
 
 # Fire up an ssh agent
-if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
-  echo "ssh-agent running with pid $SSH_AGENT_PID"
-else
-  eval "$(ssh-agent -s)"
+if ! [[ "$(hostname)" = [Oo]nyx* ]]; then
+    if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+	echo "ssh-agent running with pid $SSH_AGENT_PID"
+    else
+	eval "$(ssh-agent -s)"
+    fi
 fi
 
-rsa_keys=("${HOME}"/.ssh/*_rsa)
-if [[ -f "${rsa_keys[0]}" ]]; then
-  for k in "${rsa_keys[@]}" ; do
-    ssh-add "$k"
-  done
+if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+    ssh-add
 fi
+
+# rsa_keys=("${HOME}"/.ssh/*_rsa)
+# if [[ -f "${rsa_keys[0]}" ]]; then
+#   for k in "${rsa_keys[@]}" ; do
+#     ssh-add "$k"
+#   done
+# fi
 
 # added by travis gem
 [ -f /Users/ibeekman/.travis/travis.sh ] && source /Users/ibeekman/.travis/travis.sh
