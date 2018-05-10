@@ -22,10 +22,12 @@ fi
 if [ -d "/usr/local/bin" ]; then
   export PATH="/usr/local/bin:${PATH}"
 fi
-if [ -d "${HOME}/.jenv/bin" ]; then
+if [ -d /usr/local/opt/jenv ]; then
+  export JENV_ROOT=/usr/local/opt/jenv
+elif [ -d "${HOME}/.jenv/bin" ]; then
   export PATH="${HOME}/.jenv/bin:${PATH}"
-  eval "$(jenv init -)" || true
 fi
+which jenv > /dev/null 2>&1 && eval "$(jenv init -)"
 
 [ -d "/usr/local/sbin" ] && export PATH="/usr/local/sbin:${PATH}"
 [ -d "/usr/local/opt/go" ] && export GOROOT="/usr/local/opt/go"
