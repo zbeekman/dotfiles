@@ -236,18 +236,24 @@ proxykill() {
 }
 
 # Fire up an ssh agent
-if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
-  echo "ssh-agent running with pid $SSH_AGENT_PID"
-else
-  eval "$(ssh-agent -s)"
+if ! [[ "$(hostname)" = [Oo]nyx* ]]; then
+    if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+	echo "ssh-agent running with pid $SSH_AGENT_PID"
+    else
+	eval "$(ssh-agent -s)"
+    fi
 fi
 
-rsa_keys=("${HOME}"/.ssh/*_rsa)
-if [[ -f "${rsa_keys[0]}" ]]; then
-  for k in "${rsa_keys[@]}" ; do
-    ssh-add "$k"
-  done
+if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+    ssh-add
 fi
+
+# rsa_keys=("${HOME}"/.ssh/*_rsa)
+# if [[ -f "${rsa_keys[0]}" ]]; then
+#   for k in "${rsa_keys[@]}" ; do
+#     ssh-add "$k"
+#   done
+# fi
 
 # added by travis gem
 [ -f /Users/ibeekman/.travis/travis.sh ] && source /Users/ibeekman/.travis/travis.sh
