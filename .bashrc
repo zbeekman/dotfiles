@@ -2,8 +2,6 @@
 # shellcheck shell=bash
 # Use the system config if it exists
 
-module load cray-shmem
-
 if [[ -z "${ETC_BASHRC_SOURCED:-}" ]] ; then
   # prevent infinite loops ~/.bashrc -> /etc/bashrc -> ~/.bashrc -> ... etc.
   export ETC_BASHRC_SOURCE="yes"
@@ -197,8 +195,8 @@ fi
 
 if [[ "$(hostname)" = [Oo]nyx* ]]; then
   export LP_MARK_GIT="\[-+\]"
-  # module swap PrgEnv-cray PrgEnv-intel
-  # module load cray-shmem
+  module swap PrgEnv-cray PrgEnv-intel 2>/dev/null || true
+  module load cray-shmem 2>/dev/null|| true
 fi
 # Use Liquid Prompt
 if [[ -z "${LP_SET:-}" ]] ; then
