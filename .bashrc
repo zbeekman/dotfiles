@@ -151,9 +151,9 @@ if type -P qstat > /dev/null 2>&1 ; then
     }
 fi
 
-if type -P module > /dev/null 2>&1 ; then
+if type -a module > /dev/null 2>&1 ; then
     [ -d "${PET_HOME}/modules" ] && module use --append "${PET_HOME}/modules"
-    [ -d "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx" ] && module use --append "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx"
+    # [ -d "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx" ] && module use --append "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx"
 fi
 
 # The following lines are only for interactive shells
@@ -237,8 +237,7 @@ proxykill() {
 if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
     echo "ssh-agent running with pid $SSH_AGENT_PID"
 else
-    eval "$(ssh-agent -s)"
-    echo "Started ssh-agent with pid $SSH_AGENT_PID"
+  eval "$(ssh-agent -s)"
 fi
 
 # If an agent is running...which it should be
