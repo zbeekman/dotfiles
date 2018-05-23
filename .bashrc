@@ -2,6 +2,22 @@
 # shellcheck shell=bash
 # Use the system config if it exists
 
+# set -o errtrace
+# err_report() {
+#     _error_code=${?}
+#     local func="${FUNCNAME[1]}"
+#     local line="${BASH_LINENO[0]}"
+#     local src="${HOME}/.bashrc"
+#     echo "" >&2
+#     echo "Error in $func(), called from $src, on line $line:" >&2
+#     (( line > 0 )) && sed -n "${line}p" "$[BASH_SOURCE[0]}" >&2
+#     echo "" >&2
+# #    exit ${_error_code}
+#     return ${_error_code}
+# }
+# trap err_report ERR
+
+
 if [[ -z "${ETC_BASHRC_SOURCED:-}" ]] ; then
   # prevent infinite loops ~/.bashrc -> /etc/bashrc -> ~/.bashrc -> ... etc.
   export ETC_BASHRC_SOURCE="yes"
@@ -193,7 +209,7 @@ fi
   [[ -f /usr/local/etc/bash_completion ]] && source /usr/local/etc/bash_completion
 }
 
-if [[ "$(hostname)" = [Oo]nyx* ]]; then
+if [[ "$(hostname)" = [Oo]nyx* || "$(hostname)" = batch* ]]; then
   export LP_MARK_GIT="\[-+\]"
   module swap PrgEnv-cray PrgEnv-intel 2>/dev/null || true
   module load cray-shmem 2>/dev/null|| true
@@ -210,6 +226,7 @@ if [[ -z "${LP_SET:-}" ]] ; then
     export LP_SET="yes"
   fi
 fi
+# trap err_report ERR
 
 # Homebrew command not found
 if brew command command-not-found-init >/dev/null 2>&1; then
