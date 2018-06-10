@@ -9,6 +9,8 @@
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents))
 
 (setq use-package-verbose t) ; verbose init debug & profiling
 
@@ -32,7 +34,6 @@
   :ensure t)
 
 (use-package zenburn-theme
-  :if window-system
   :ensure t
   :config
   (load-theme 'zenburn)
@@ -378,6 +379,36 @@
   (global-smart-tab-mode 1)
   (setq smart-tab-using-hippie-expand t))
 
+
+(use-package elpy
+  :ensure t
+  :commands (elpy-use-ipython)
+  :init
+  (elpy-enable)
+  :config
+  (when (require 'flycheck nil t)
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    (add-hook 'elpy-mode-hook 'flycheck-mode))
+  )
+
+(use-package python
+  :ensure t
+  :config
+  (setq python-shell-interpreter "jupyter"
+	python-shell-interpreter-args "console --simple-prompt"
+	python-shell-prompt-detect-failure-warning nil)
+  (add-to-list 'python-shell-completion-native-disabled-interpreters
+               "jupyter")
+  )
+
+(use-package ein
+  :ensure t
+  :init
+  (setq
+   ein:use-auto-complete t
+   ein:complete-on-dot t)
+  )
+
 (use-package term
   :ensure t
   :bind
@@ -512,7 +543,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (cmake-font-lock flycheck travis smart-tab highlight-parentheses auctex zenburn-theme use-package exec-path-from-shell)))
+    (ein elpy cmake-font-lock flycheck travis smart-tab highlight-parentheses auctex zenburn-theme use-package exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
