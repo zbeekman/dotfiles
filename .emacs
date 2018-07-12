@@ -1,6 +1,3 @@
-;; Uncomment to enable debugging
-(setq debug-on-error t) ; set this to get stack traces on errors
-
 ;; Use use-package to create portable emacs-config
 ;; bootstrap emacs setup from package managers
 (require 'package)
@@ -21,14 +18,12 @@
 (eval-when-compile
   (require 'use-package))
 
+;; Uncomment to enable debugging
+(setq debug-on-error t) ; set this to get stack traces on errors
+
 (require 'bind-key)
 
 (setq use-package-verbose t) ; verbose init debug & profiling
-
-;; Use the zenburn theme, but ONLY if we have a window system
-(setq custom-safe-themes
-  (quote
-   ("e11569fd7e31321a33358ee4b232c2d3cf05caccd90f896e1df6cab228191109" default)))
 
 (use-package diminish
   :ensure t)
@@ -36,7 +31,7 @@
 (use-package zenburn-theme
   :ensure t
   :config
-  (load-theme 'zenburn)
+  (load-theme 'zenburn t)
   )
 
 ;; Starts the Emacs server when window system
@@ -288,7 +283,7 @@
 (setq-default show-trailing-whitespace t)
 (setq-default indicate-empty-lines t)
 
-; Configure LaTeX stuff like Auctex
+;; Configure LaTeX stuff like Auctex
 (use-package tex
 	     :ensure auctex
 	     :init
@@ -536,7 +531,7 @@
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-safe-themes
    (quote
-    ("599f1561d84229e02807c952919cd9b0fbaa97ace123851df84806b067666332" "e11569fd7e31321a33358ee4b232c2d3cf05caccd90f896e1df6cab228191109" default)))
+    ("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
  '(fci-rule-color "#383838")
  '(nrepl-message-colors
    (quote
