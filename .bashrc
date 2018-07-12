@@ -271,7 +271,7 @@ if [[ -d "${HOME}/.secrets/tokens" ]]; then
     for token in ${HOME}/.secrets/tokens/* ; do
 	echo "sourcing file $token"
 	# shellcheck disable=SC1090
-	source "$token"
+	[[ -f "${token}" ]] && source "$token"
     done
 fi
 
