@@ -4,12 +4,12 @@
 [ -z "${DOT_PROFILE_SOURCED}" ] || return
 export DOT_PROFILE_SOURCED="yes"
 
-if [ "`uname`" = "Linux" ] ; then
+if [ "$(uname)" = "Linux" ] ; then
     setxkbmap -layout us -option ctrl:nocaps
 fi
 
-which emacs > /dev/null 2>&1 && export EDITOR="emacs -nw"
-which less > /dev/null 2>&1 && export PAGER=less
+command -v emacs > /dev/null 2>&1 && export EDITOR="emacs -nw"
+command -v less > /dev/null 2>&1 && export PAGER=less
 if [ -d "${WORKDIR}" ]; then # DSRCs
   export TMPDIR="${WORKDIR}/tmp"
   export TMP="${WORKDIR}/tmp"
@@ -34,7 +34,7 @@ if [ -d /usr/local/opt/jenv ]; then
 elif [ -d "${HOME}/.jenv/bin" ]; then
   export PATH="${HOME}/.jenv/bin:${PATH}"
 fi
-which jenv > /dev/null 2>&1 && eval "$(jenv init -)"
+command -v jenv > /dev/null 2>&1 && eval "$(jenv init -)"
 
 [ -d "/usr/local/sbin" ] && export PATH="/usr/local/sbin:${PATH}"
 [ -d "/usr/local/opt/go" ] && export GOROOT="/usr/local/opt/go"
@@ -74,9 +74,11 @@ export LESS_TERMCAP_ue
 # Enable syntax-highlighting in less.
 # brew install source-highlight
 # First, add these two lines to ~/.bashrc
-if which highlight > /dev/null 2>&1 ; then # we have highlight on the path
-  LESSOPEN="| $(which highlight) %s --out-format xterm256 --quiet --force --style candy"
-  alias show="highlight $@ --out-format xterm256 --line-numbers --quiet --force --style candy"
+if command -v highlight > /dev/null 2>&1 ; then # we have highlight on the path
+  LESSOPEN="| $(command -v highlight) %s --out-format xterm256 --quiet --force --style candy"
+  show(){
+      highlight "$@" --out-format xterm256 --line-numbers --quiet --force --style candy
+  }
 fi
 export LESSOPEN
 export LESS=" -i -R -J "
@@ -98,7 +100,7 @@ fi
 
 export PATH="${PATH}:${GOPATH}/bin"
 
-#export __TAUCMDR_PROGRESS_BARS__="minimal"
+export __TAUCMDR_PROGRESS_BARS__="disabled"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 [ -d "${HOME}/.rvm/bin" ] && export PATH="${PATH}:${HOME}/.rvm/bin"
@@ -106,6 +108,6 @@ export PATH="${PATH}:${GOPATH}/bin"
 # shellcheck disable=SC1091
 [ -s "$HOME/.rvm/scripts/rvm" ] && . "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-which asciinema > /dev/null 2>&1 && alias asciinema="LC_ALL=en_IN.UTF-8 asciinema"
+command -v asciinema > /dev/null 2>&1 && alias asciinema="LC_ALL=en_IN.UTF-8 asciinema"
 
 [ -d "/p/work/sameer/ff/firefox" ] && export PATH="/p/work/sameer/ff/firefox:${PATH}"

@@ -1,39 +1,85 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
+
+# to profile and/or debug, set DEBUG=true
+DEBUG=false
+
+if [[ "${DEBUG}" == true ]]; then
+    # This timing trace requires the `moreutils` package, e.g. `brew install moreutils`
+    # open file descriptor 5 such that anything written to /dev/fd/5
+    # is piped through ts and then to /tmp/timestamps
+    exec 5> >(ts -i "%.s" >> /tmp/timestamps)
+
+    # https://www.gnu.org/software/bash/manual/html_node/Bash-Variables.html
+    export BASH_XTRACEFD="5"
+
+    set -x
+    set -o verbose
+    set -o errexit
+fi
+
+# Debug completion with:
+# export DOT_BASHRC_SOURCED="yes"
+
+set -o errtrace
+
+prepend_path () {
+    # Add $1 to front of PATH or variable specified by $2
+    if [[ -n "${2:-}" ]]; then
+	VAR="${2}"
+    else
+	VAR=PATH
+    fi
+    if [[ ! -d "${1}" ]] || [[ -x "${1}" ]]; then
+	return 1
+    fi
+    ${VAR}="${1}:${VAR}"
+    export ${VAR}
+}
+
+add_path () {
+    # Add $1 to back of PATH, if it's not in it already
+    # or to $2 (instead of $PATH, if $2 is present)
+    if [[ -n "${2:-}" ]]; then
+	VAR="${2}"
+    else
+	VAR=PATH
+    fi
+    if [[ ! -d "${1}" ]] || [[ -x "${1}" ]]; then
+	return 1
+    fi
+
+    if ! grep "$1" <<< $VAR > /dev/null 2>&1 ; then
+	${VAR}="${VAR}:${1}"
+	export ${VAR}
+    fi
+}
+
+source_if_present () {
+    if [ -f "$1" ] ; then
+	. "$1"
+    fi
+}
+
 # Use the system config if it exists
-
-# set -o errtrace
-# err_report() {
-#     _error_code=${?}
-#     local func="${FUNCNAME[1]}"
-#     local line="${BASH_LINENO[0]}"
-#     local src="${HOME}/.bashrc"
-#     echo "" >&2
-#     echo "Error in $func(), called from $src, on line $line:" >&2
-#     (( line > 0 )) && sed -n "${line}p" "$[BASH_SOURCE[0]}" >&2
-#     echo "" >&2
-# #    exit ${_error_code}
-#     return ${_error_code}
-# }
-# trap err_report ERR
-
-
 if [[ -z "${ETC_BASHRC_SOURCED:-}" ]] ; then
   # prevent infinite loops ~/.bashrc -> /etc/bashrc -> ~/.bashrc -> ... etc.
-  export ETC_BASHRC_SOURCE="yes"
+  export ETC_BASHRC_SOURCED="yes"
   # shellcheck disable=SC1091
   {
-    if [ -f /etc/bashrc ]; then
-      . /etc/bashrc
-    elif [ -f /etc/bash.bashrc ]; then
-      . /etc/bash.bashrc
-    fi
+      source_if_present /etc/bashrc
+      source_if_present /etc/bash.bashrc
   }
 fi
 
 # Don't source .bashrc more than once
-[[ -z "${DOT_BASHRC_SOURCED:-}" ]] || return
-export DOT_BASHRC_SOURCED="yes"
+if [[ -z "${DOT_BASHRC_SOURCED:-}" ]] ; then
+    echo "Setting DOT_BASHRC_SOURCED=yes"
+    export DOT_BASHRC_SOURCED="yes"
+else
+    echo "${HOME}/.bashrc already sourced! Unset DOT_BASHRC_SOURCED to do it again."
+    return
+fi
 
 # Fix TMPDIR to point to a suitable location
 if [ -z "${TMPDIR}" ] ; then
@@ -43,12 +89,13 @@ if [ -z "${TMPDIR}" ] ; then
 	export TMPDIR=/tmp
     fi
 elif [[ ! "${TMPDIR}" =~ "/tmp/?$" ]] ; then
-    export TMPDIR="${TMPDIR%/}/tmp"
+    mkdir -p "${TMPDIR%/}/tmp" && \
+	export TMPDIR="${TMPDIR%/}/tmp"
 fi
 
 # Keep taucmdr from jamming up iTerm2 w/ it's fancy CPU meters
-# __TAUCMDR_PROGRESS_BARS__="disable"
-# export __TAUCMDR_PROGRESS_BARS__
+__TAUCMDR_PROGRESS_BARS__="disabled"
+export __TAUCMDR_PROGRESS_BARS__
 
 if [[ $OSTYPE == [Dd]arwin* ]]; then
   compilervars () {
@@ -78,19 +125,19 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
   }
 fi
 
-if ! (echo "${PATH}" | grep "/usr/local/bin" > /dev/null 2>&1) && [[ -d "/usr/local/bin" ]]; then
-  export PATH="/usr/local/bin:${PATH}"
+if ! (echo "${PATH}" | grep "/usr/local/bin" > /dev/null 2>&1) ; then
+    prepend_path "/usr/local/bin" PATH
 fi
 
 free_mosh () {
-    for d in $(brew --cellar mosh)/* ; do
+    for d in "$(brew --cellar mosh)"/* ; do
 	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add "${d}/bin/mosh-server"
 	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${d}/bin/mosh-server"
     done
 }
 
 # mkcd: mkdir and cd into it
-mkcd () { mkdir -p "$@" && eval cd "\"\$$#\""; }
+mkcd () { mkdir -p "$@" && cd "$_" || return; }
 
 # extract: untar all the things
 extract() {
@@ -168,7 +215,9 @@ if type -P qstat > /dev/null 2>&1 ; then
 fi
 
 if type -a module > /dev/null 2>&1 ; then
-    [ -d "${PET_HOME}/modules" ] && module use --append "${PET_HOME}/modules"
+    if [ -d "${PET_HOME}/modules" ] ; then
+	module use --append "${PET_HOME}/modules"
+    fi
     # [ -d "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx" ] && module use --append "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx"
 fi
 
@@ -188,29 +237,32 @@ shopt -s cmdhist
 shopt -s histappend
 shopt -u histreedit
 
-
 #export LP_PS1_PREFIX='\[\e]0;\h:\W\a\]'
 
 # Use iTerm shell integration
-if [[ "${OSTYPE}" = [Dd]arwin* ]]; then
-  if [[ -f "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")" && "${TERM}" =~ "xterm" ]]; then
-    # shellcheck source=/Users/ibeekman/.iterm2_shell_integration.bash
-    source "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")"
-    LP_PS1_PREFIX="${LP_PS1_PREFIX}\\[$(iterm2_prompt_mark)\\]"
-    export LP_PS1_PREFIX
-  fi
-fi
+# if [[ "${OSTYPE}" == [Dd]arwin* ]]; then
+#   if [[ -f "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")" && "${TERM}" =~ "xterm" ]]; then
+#     # shellcheck source=/Users/ibeekman/.iterm2_shell_integration.bash
+#     source "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")"
+#     LP_PS1_PREFIX="${LP_PS1_PREFIX}\\[$(iterm2_prompt_mark)\\]"
+#     export LP_PS1_PREFIX
+#   fi
+# fi
 
 
 # Use Bash completion, if installed
 # shellcheck disable=SC1091
+set +o errexit
 {
-  [[ -f /etc/bash_completion ]] && source /etc/bash_completion
-  [[ -f /usr/local/etc/bash_completion ]] && source /usr/local/etc/bash_completion
+  source_if_present /etc/bash_completion || true
+  source_if_present /usr/local/etc/bash_completion || true
 }
+if [[ "${DEBUG}" == true ]]; then
+    set -o errexit
+fi
 
 if [[ "$(hostname)" = [Oo]nyx* || "$(hostname)" = batch* ]]; then
-  export LP_MARK_GIT="\[-+\]"
+  export LP_MARK_GIT="\\[-+\\]"
   module swap PrgEnv-cray PrgEnv-intel 2>/dev/null || true
   module load cray-shmem 2>/dev/null|| true
 fi
@@ -221,8 +273,9 @@ if [[ -z "${LP_SET:-}" ]] ; then
     # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
     source "${HOME}/dotfiles/liquidprompt/liquidprompt"
     export LP_SET="yes"
-  elif [[ -f "/usr/local/share/liquidprompt" ]] ; then
-    source "/usr/local/share/liquidprompt"
+  else
+    # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
+    source_if_present "/usr/local/share/liquidprompt"
     export LP_SET="yes"
   fi
 fi
@@ -264,19 +317,49 @@ if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
 fi
 
 # added by travis gem
-[ -f /Users/ibeekman/.travis/travis.sh ] && source /Users/ibeekman/.travis/travis.sh
+# shellcheck source=/Users/ibeekman/.travis/travis.sh
+source_if_present /Users/ibeekman/.travis/travis.sh
 
 # Get tokens if they exist
 if [[ -d "${HOME}/.secrets/tokens" ]]; then
-    for token in ${HOME}/.secrets/tokens/* ; do
+    for token in "${HOME}"/.secrets/tokens/* ; do
 	echo "sourcing file $token"
 	# shellcheck disable=SC1090
-	[[ -f "${token}" ]] && source "$token"
+	source_if_present "$token"
     done
 fi
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-[[ -d "${HOME}/.rvm/bin" ]] && export PATH="$PATH:$HOME/.rvm/bin"
+add_path "$HOME/.rvm/bin" || true
 
 # Set OVPN store
-export OVPN_DATA=ovpn-data-PT-EAST
+#export OVPN_DATA=ovpn-data-PT-EAST
+brew_show_outdated() {
+    if [[ "${OSTYPE}" == [Dd]arwin* ]]; then
+	if [[ -f "${2}"p ]] ; then
+	    _lines="$(wc -l "${2}")"
+	    if [[ $_lines -gt 0 ]]; then
+		echo " "
+		echo "\\* Outdated ${1}:"
+		cat "${2}"
+		echo ""
+	    fi
+	fi
+    fi
+}
+
+# Print message telling user about outdated packages on macOS
+brew_show_outdated Formulae /tmp/brew.outdated || true
+brew_show_outdated Casks /tmp/cask.outdated || true
+brew_show_outdated Apps /tmp/mas.outdated || true
+
+export HOMEBREW_MIANTAINER=1
+export HOMEBREW_BINTRAY_USER=zbeekman
+
+# If debugging was turned on, turn off everything here:
+if [[ "${DEBUG}" == true ]]; then
+    unset  BASH_XTRACEFD
+    set +x
+    set +o verbose
+    set +o errexit
+fi

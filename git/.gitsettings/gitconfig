@@ -86,6 +86,7 @@
 	tool = ediff
 	guitool = ediff
 	submodule = log
+	renameLimit = 2000
 
 [difftool "ediff"]
 	cmd = ~/ediff.sh $LOCAL $REMOTE $MERGED
@@ -144,3 +145,7 @@
 	prune = 1
 [receive]
 	fsckObjects = true
+[gpg]
+	program = /usr/local/MacGPG2/bin/gpg2
+[tag]
+	forceSignAnnotated = true

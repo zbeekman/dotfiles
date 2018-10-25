@@ -363,6 +363,14 @@
     )
   )
 
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker))
+
+(use-package dockerfile-mode
+  :ensure t
+  :mode (("\\Dockerfile'" . dockerfile-mode)))
+
 (use-package highlight-parentheses
   :ensure t
   :init (global-highlight-parentheses-mode))
@@ -538,7 +546,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (ein elpy cmake-font-lock flycheck travis smart-tab highlight-parentheses auctex zenburn-theme use-package exec-path-from-shell)))
+    (docker dockerfile-mode ein elpy cmake-font-lock flycheck travis smart-tab highlight-parentheses auctex zenburn-theme use-package exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
