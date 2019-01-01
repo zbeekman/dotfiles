@@ -34,7 +34,7 @@ prepend_path () {
 	return 1
     fi
     ${VAR}="${1}:${VAR}"
-    export ${VAR}
+    export ${VAR?}
 }
 
 add_path () {
@@ -51,12 +51,13 @@ add_path () {
 
     if ! grep "$1" <<< $VAR > /dev/null 2>&1 ; then
 	${VAR}="${VAR}:${1}"
-	export ${VAR}
+	export ${VAR?}
     fi
 }
 
 source_if_present () {
     if [ -f "$1" ] ; then
+	# shellcheck disable=SC1090
 	. "$1"
     fi
 }
@@ -363,3 +364,6 @@ if [[ "${DEBUG}" == true ]]; then
     set +o verbose
     set +o errexit
 fi
+
+# shellcheck source=/Users/ibeekman/.fzf.bash
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
