@@ -1,7 +1,7 @@
 [user]
 	name = Izaak Beekman
 	email = zbeekman@gmail.com
-	signingkey = 92A64702
+	signingkey = A94489D938CB936668F90911A93CE70D8021BD0F
 	logallrefupdates = true
 [credential]
 	helper = osxkeychain
