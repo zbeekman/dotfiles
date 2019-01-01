@@ -149,3 +149,5 @@
 	program = /usr/local/MacGPG2/bin/gpg2
 [tag]
 	forceSignAnnotated = true
+[url "git@github.com:"]
+    insteadOf = "https://github.com/"
