@@ -353,7 +353,7 @@ shell:
   args:
     - --login
     - -c
-    - 'tmux new-session -A'
+    - 'tmux new-session -A -s Alacritty'
 
 # Key bindings
 #
