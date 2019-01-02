@@ -107,7 +107,14 @@ export __TAUCMDR_PROGRESS_BARS__="disabled"
 # shellcheck disable=SC2015
 [ -d "/p/work/sameer/ff/firefox" ] && export PATH="/p/work/sameer/ff/firefox:${PATH}" || true
 
-# if [ "$(basename "${SHELL}")" = "bash" ]; then
-#   # shellcheck source=/Users/ibeekman/dotfiles/.bashrc
-#   [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
-# fi
+# Fire up an ssh agent
+if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+    echo "ssh-agent running with pid $SSH_AGENT_PID"
+else
+  eval "$(ssh-agent -s)"
+fi
+
+if [ "$(basename "${SHELL}")" = "bash" ]; then
+  # shellcheck source=/Users/ibeekman/dotfiles/.bashrc
+  [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
+fi
