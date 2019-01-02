@@ -3,8 +3,6 @@
 
 # to profile and/or debug, set DEBUG=true
 DEBUG=false
-set -v
-set -o errexit
 
 if [[ "${DEBUG}" == true ]]; then
     # This timing trace requires the `moreutils` package, e.g. `brew install moreutils`
