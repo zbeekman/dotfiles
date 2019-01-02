@@ -325,16 +325,14 @@ if [[ $- == *i* ]] ; then
     fi
 
     # Use Liquid Prompt
-    if [[ -z "${LP_SET:-}" ]] ; then
+    if [[ ! "${PROMPT_COMMAND:-}" = *lp_set_prompt ]] ; then
 	# liquid prompt not yet enabled
 	if [[ -f "${HOME}/dotfiles/liquidprompt/liquidprompt" ]] ; then
 	    # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
 	    source "${HOME}/dotfiles/liquidprompt/liquidprompt"
-	    export LP_SET="yes"
 	else
 	    # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
 	    source_if_present "/usr/local/share/liquidprompt"
-	    export LP_SET="yes"
 	fi
     fi
     # trap err_report ERR
