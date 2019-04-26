@@ -361,7 +361,6 @@ if [[ $- == *i* ]] ; then
 
     export HOMEBREW_MIANTAINER=1
     export HOMEBREW_BINTRAY_USER=zbeekman
-    export HOMEBREW_NO_INSTALL_CLEANUP=1
 
     # shellcheck source=/Users/ibeekman/.fzf.bash
     source_if_present ~/.fzf.bash
