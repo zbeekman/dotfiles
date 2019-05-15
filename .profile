@@ -124,8 +124,7 @@ fi
 # Uncomment to enable autojump:
 # export MOOSE_JUMP=true
 
-# Source MOOSE profile
-if [ -f /opt/moose/environments/moose_profile ]; then
-    
-#        . /opt/moose/environments/moose_profile
-fi
+# # Source MOOSE profile
+# if [ -f /opt/moose/environments/moose_profile ]; then
+#     . /opt/moose/environments/moose_profile
+# fi
