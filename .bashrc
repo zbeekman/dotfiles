@@ -376,3 +376,5 @@ if [[ "${DEBUG}" == true ]]; then
     set +o verbose
     set +o errexit
 fi
+
+source_if_present /usr/local/opt/modules/init/bash

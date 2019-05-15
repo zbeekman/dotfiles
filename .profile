@@ -118,3 +118,13 @@ if [ "$(basename "${SHELL}")" = "bash" ]; then
   # shellcheck source=/Users/ibeekman/dotfiles/.bashrc
   [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
 fi
+# Uncomment to enable pretty prompt:
+# export MOOSE_PROMPT=true
+
+# Uncomment to enable autojump:
+# export MOOSE_JUMP=true
+
+# Source MOOSE profile
+if [ -f /opt/moose/environments/moose_profile ]; then
+        . /opt/moose/environments/moose_profile
+fi
