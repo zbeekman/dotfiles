@@ -351,6 +351,15 @@ if [[ $- == *i* ]] ; then
 	done
     fi
 
+    # if [ -f "${HOME}/.gpg-agent-info" ]; then
+    #     . "${HOME}/.gpg-agent-info"
+    #     export GPG_AGENT_INFO
+    #     export SSH_AUTH_SOCK
+    # fi
+    export GPG_TTY=$(tty)
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+    gpgconf --launch gpg-agent
+
     # Set OVPN store
     #export OVPN_DATA=ovpn-data-PT-EAST
 

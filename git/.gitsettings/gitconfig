@@ -146,7 +146,7 @@
 [receive]
 	fsckObjects = true
 [gpg]
-	program = /usr/local/MacGPG2/bin/gpg2
+	program = /usr/local/bin/gpg
 [tag]
 	forceSignAnnotated = true
 [url "git@github.com:"]
