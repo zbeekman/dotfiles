@@ -1,3 +1,4 @@
+
 #!/bin/sh
 # shellcheck shell=sh
 
@@ -104,15 +105,20 @@ export __TAUCMDR_PROGRESS_BARS__="disabled"
 # shellcheck disable=SC1090,SC2015
 [ -s "$HOME/.rvm/scripts/rvm" ] && . "$HOME/.rvm/scripts/rvm" || true # Load RVM into a shell session *as a function*
 
-# shellcheck disable=SC2015
-[ -d "/p/work/sameer/ff/firefox" ] && export PATH="/p/work/sameer/ff/firefox:${PATH}" || true
 
-# Fire up an ssh agent
-if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
-    echo "ssh-agent running with pid $SSH_AGENT_PID"
+if keychain --help > /dev/null ; then
+    eval "$(keychain --agents "gpg,ssh" --eval)"
+    export GPG_AGENT_PID="$(pgrep gpg-agent)"
+    export SSH_AGENT_PID="$(pgrep ssh-agent)"
 else
-  eval "$(ssh-agent -s)"
+    if pid="$(pgrep gpg-agent)" ; then
+        export GPG_AGENT_PID="$pid"
+    else
+        gpgconf --launch gpg-agent
+        GPG_AGENT_PID="$(pgrep gpg-agent)"
+    fi
 fi
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 
 if [ "$(basename "${SHELL}")" = "bash" ]; then
   # shellcheck source=/Users/ibeekman/dotfiles/.bashrc

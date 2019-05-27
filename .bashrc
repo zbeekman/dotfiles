@@ -337,10 +337,13 @@ if [[ $- == *i* ]] ; then
     fi
     # trap err_report ERR
 
+    export GPG_TTY=$(tty)
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+
     # If an agent is running...which it should be
-    if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+    if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1 || ps -p "$GPG_AGENT_PID" > /dev/null 2>&1 ; then
 	# and if we haven't added the default keys...
-	ssh -add -l &> /dev/null || ssh-add || echo "Could not add keys to ssh-agent."
+	ssh-add -l &> /dev/null || ssh-add || echo "Could not add keys to ssh-agent."
     fi
 
     # Get tokens if they exist
@@ -350,15 +353,6 @@ if [[ $- == *i* ]] ; then
 	    source_if_present "$token"
 	done
     fi
-
-    # if [ -f "${HOME}/.gpg-agent-info" ]; then
-    #     . "${HOME}/.gpg-agent-info"
-    #     export GPG_AGENT_INFO
-    #     export SSH_AUTH_SOCK
-    # fi
-    export GPG_TTY=$(tty)
-    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-    gpgconf --launch gpg-agent
 
     # Set OVPN store
     #export OVPN_DATA=ovpn-data-PT-EAST
