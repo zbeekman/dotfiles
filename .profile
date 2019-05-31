@@ -1,4 +1,3 @@
-
 #!/bin/sh
 # shellcheck shell=sh
 
@@ -134,3 +133,5 @@ fi
 if [ -f /opt/moose/environments/moose_profile ]; then
     . /opt/moose/environments/moose_profile
 fi
+
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
