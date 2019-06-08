@@ -25,3 +25,9 @@ if command -v fortran-tags.py > /dev/null 2>&1 ; then
 	find "${@-.}" -name '*.[fF]90' ! -name '*__genmod.*' -print0 | xargs -0 fortran-tags.py -g
     }
 fi
+
+if highlight --help >/dev/null 2>&1 ; then
+  show () {
+      highlight "$@" --out-format xterm256 --line-numbers --quiet --force --style candy
+  }
+fi

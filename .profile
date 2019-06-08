@@ -82,9 +82,6 @@ export LESS_TERMCAP_ue
 # First, add these two lines to ~/.bashrc
 if highlight --help > /dev/null 2>&1 ; then # we have highlight on the path
   LESSOPEN="| $(type -P highlight) %s --out-format xterm256 --quiet --force --style candy"
-  show(){
-      highlight "$@" --out-format xterm256 --line-numbers --quiet --force --style candy
-  }
 fi
 export LESSOPEN
 export LESS=" -i -R -J "
