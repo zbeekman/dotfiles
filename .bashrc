@@ -181,6 +181,7 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
   if icecc --version &>/dev/null ; then
       icecream_pick_compiler
   fi
+  export ICECC_CLANG_REMOTE_CPP=0
 fi
 
 # Define a command to start an ssh SOCKS tunnel for proxying web traffic
