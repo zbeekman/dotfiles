@@ -96,9 +96,16 @@ brew_show_outdated() {
 }
 
 free_mosh () {
-    for d in "$(brew --cellar mosh)"/* ; do
-	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add "${d}/bin/mosh-server"
-	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${d}/bin/mosh-server"
+    _d="$(brew --prefix mosh)/bin"
+    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add "${_d}/mosh-server"
+    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${_d}/mosh-server"
+}
+
+free_icecream () {
+    _d="$(brew --prefix icecream)/sbin"
+    for daemon in iceccd icecc-schedulre ; do
+	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add "${_d}/${daemon}"
+	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${_d}/${daemon}"
     done
 }
 
