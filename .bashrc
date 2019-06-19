@@ -103,7 +103,7 @@ free_mosh () {
 
 free_icecream () {
     _d="$(brew --prefix icecream)/sbin"
-    for daemon in iceccd icecc-schedulre ; do
+    for daemon in iceccd icecc-scheduler ; do
 	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add "${_d}/${daemon}"
 	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${_d}/${daemon}"
     done
