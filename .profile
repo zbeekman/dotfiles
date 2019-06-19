@@ -128,4 +128,4 @@ fi
 
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
-export ICECC_IGNORE_UNVEWRIFIED=1
+export ICECC_IGNORE_UNVERIFIED=1
