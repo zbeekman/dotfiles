@@ -168,12 +168,12 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
          fi
        done
        # have both compilers
-       ICECREAM_CC="$(type -P gcc-${major_version})"
-       ICECREAM_CXX="$(type -P g++-${major_version})"
-       export ICECREAM_CC
-       export ICECREAM_CXX
-       echo "ICECREAM_CC =$ICECREAM_CC"
-       echo "ICECREAM_CXX=$ICECREAM_CXX"
+       ICECC_CC="$(type -P gcc-${major_version})"
+       ICECC_CXX="$(type -P g++-${major_version})"
+       export ICECC_CC
+       export ICECXX_CXX
+       echo "ICECC_CC =$ICECREAM_CC"
+       echo "ICECC_CXX=$ICECREAM_CXX"
        break
     done
   }
