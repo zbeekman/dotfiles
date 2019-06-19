@@ -5,26 +5,17 @@
 # All other lines must look like "KEY=VALUE" (without the quotes).
 # The VALUE must not be enclosed in quotes as well!
 
-# aat-frontend: Show geo coordinates (default false)
+# Show geo coordinates (default false)
 aat-coords=true
 
-# aat-frontend: Monochrome output (default false)
-aat-monochrome=false
-
-# BACKEND to be used (default forecast.io)
+# BACKEND to be used (default worldweatheronline.com)
 backend=forecast.io
+
+# LOCATION to be queried (default New York)
+city=New York
 
 # NUMBER of days of weather forecast to be displayed (default 3)
 days=3
-
-# forecast backend: the api KEY to use (default )
-forecast-api-key=9126b02c55e31e6fe70364900444a0ad
-
-# forecast backend: print raw requests and responses (default false)
-forecast-debug=false
-
-# forecast backend: the LANGUAGE to request from forecast.io (default en)
-forecast-lang=en
 
 # FRONTEND to be used (default ascii-art-table)
 frontend=ascii-art-table
@@ -32,27 +23,24 @@ frontend=ascii-art-table
 # json frontend: do not indent the output (default false)
 jsn-no-indent=false
 
-# LOCATION to be queried (default 40.748,-73.985)
-location=38.907009,-77.029324
-
-# openweathermap backend: the api KEY to use (default )
-owm-api-key=e0b566092f24190124a170d46624b5e2
-
-# openweathermap backend: print raw requests and responses (default false)
-owm-debug=false
-
-# openweathermap backend: the LANGUAGE to request from openweathermap (default en)
-owm-lang=en
-
 # UNITSYSTEM to use for output.
-# Choices are: metric, imperial, si, metric-ms (default metric)
+# Choices are: metric, imperial, si (default metric)
 units=imperial
 
-# worldweatheronline backend: the api KEY to use (default )
+# wwo backend: the api KEY to use (default )
 wwo-api-key=8c638c08c4d64c9eb30212824181906
 
-# worldweatheronline backend: print raw requests and responses (default false)
-wwo-debug=false
-
-# worldweatheronline backend: the LANGUAGE to request from worldweatheronline (default en)
+# wwo backend: the LANGUAGE to request from wwo (default en)
 wwo-lang=en
+
+
+# The following options are probably deprecated and not used currently!
+owm-lang=en
+wwo-debug=false
+aat-monochrome=false
+forecast-api-key=9126b02c55e31e6fe70364900444a0ad
+owm-api-key=e0b566092f24190124a170d46624b5e2
+forecast-lang=en
+location=38.907009,-77.029324
+owm-debug=false
+forecast-debug=false

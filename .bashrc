@@ -179,8 +179,8 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
        ICECC_CXX="$(type -P g++-${major_version})"
        export ICECC_CC
        export ICECXX_CXX
-       echo "ICECC_CC =$ICECREAM_CC"
-       echo "ICECC_CXX=$ICECREAM_CXX"
+       echo "ICECC_CC =$ICECC_CC"
+       echo "ICECC_CXX=$ICECC_CXX"
        break
     done
   }
