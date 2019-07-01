@@ -68,6 +68,11 @@
 (use-package travis
   :ensure t)
 
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
 ;; Always use recentf
 
 ;; misc variables
@@ -340,6 +345,12 @@
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown"))
 
+(use-package markdown-toc
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . gfm-mode)
+         ("\\.markdown\\'" . markdown-mode)))
+
 (use-package yaml-mode
   :ensure t
   :commands (yaml-mode)
@@ -546,7 +557,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (docker dockerfile-mode ein elpy cmake-font-lock flycheck travis smart-tab highlight-parentheses auctex zenburn-theme use-package exec-path-from-shell)))
+    (markdown-toc docker dockerfile-mode ein elpy cmake-font-lock travis smart-tab highlight-parentheses auctex zenburn-theme exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
