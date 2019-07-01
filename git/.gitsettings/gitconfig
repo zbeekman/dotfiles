@@ -61,14 +61,26 @@
 	fap = fetch --all --prune
 	compare = log --left-right --graph --cherry-pick --oneline
 	cmpr = log --left-right --cherry-pick --abbrev-commit --decorate --oneline --no-merges
+	conflicts = diff --name-only --diff-filter=U
+	fix = "!${EDITOR} $(git diff --name-only --relative --diff-filter=U | uniq)"
 [branch]
 	autosetupmerge = true
+
+[branch "master"]
+	mergeoptions = --no-ff
+
+[branch "develop"]
+	mergeoptions = --no-ff
+
 [gui]
 	warndetachedcommit = true
 
 [merge]
 	tool = ediff
 	conflictStyle = diff3
+
+[pull]
+	ff=yes
 
 [mergetool "ediff"]
 	cmd = ~/.gitsettings/util/ediff.sh $LOCAL $REMOTE $MERGED $BASE
@@ -142,7 +154,7 @@
 	fsckObjects = true
 [fetch]
 	fsckObjects = true
-	prune = 1
+
 [receive]
 	fsckObjects = true
 [gpg]
@@ -151,3 +163,5 @@
 	forceSignAnnotated = true
 [url "git@github.com:"]
     insteadOf = "https://github.com/"
+[checkout]
+	defaultRemote = origin
