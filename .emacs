@@ -68,12 +68,27 @@
 (use-package travis
   :ensure t)
 
-(use-package editorconfig
+(use-package ws-butler
   :ensure t
-  :config
-  (editorconfig-mode 1))
+  :config (ws-butler-global-mode))
 
-;; Always use recentf
+(use-package editorconfig
+  :ensure ws-butler
+  :init
+  (setq editorconfig-trim-whitespaces-mode
+         'ws-butler-mode)
+  :config
+  (editorconfig-mode 1)
+  (add-to-list 'editorconfig-indentation-alist
+               '(f90-mode
+                 f90-associate-indent f90-continuation-indent
+                 f90-critical-indent f90-do-indent f90-if-indent
+                 f90-program-indent f90-type-indent))
+  ;; Always use tabs for Makefiles
+  (add-hook 'editorconfig-hack-properties-functions
+	    '(lambda (props)
+	       (when (derived-mode-p 'makefile-mode)
+		 (puthash 'indent_style "tab" props)))))
 
 ;; misc variables
 (setq f90-smart-end-names nil)
@@ -369,7 +384,6 @@
     :defer t
     :commands (cmake-font-lock-activate)
     :hook (cmake-mode . (lambda ()
-                          (message "\nActivating font lock?\n")
                           (cmake-font-lock-activate)))
     )
   )
@@ -557,7 +571,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (markdown-toc docker dockerfile-mode ein elpy cmake-font-lock travis smart-tab highlight-parentheses auctex zenburn-theme exec-path-from-shell)))
+    (ws-butler markdown-toc docker dockerfile-mode ein elpy cmake-font-lock travis smart-tab highlight-parentheses auctex zenburn-theme exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
