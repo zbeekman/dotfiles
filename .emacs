@@ -1,11 +1,26 @@
 ;; Use use-package to create portable emacs-config
 ;; bootstrap emacs setup from package managers
-(require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(require 'package)
+;;(setq package-archives (cons ("gnu" . "http://elpa.gnu.org/packages/")))
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
+
 (when (not package-archive-contents)
   (package-refresh-contents))
 
@@ -17,22 +32,197 @@
 
 (eval-when-compile
   (require 'use-package))
+(setq use-package-compute-statistics t)
 
 ;; Uncomment to enable debugging
 (setq debug-on-error t) ; set this to get stack traces on errors
 
 (require 'bind-key)
 
-(setq use-package-verbose t) ; verbose init debug & profiling
+(use-package system-packages
+  :ensure t
+  :init
+  (if (eq system-type 'darwin) (setq system-packages-package-manager 'brew)
+    (setq system-packages-use-sudo t)))
 
-(use-package diminish
+(use-package use-package-ensure-system-package
   :ensure t)
+
+;; Always try to update packages
+(use-package auto-package-update
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  (setq auto-package-update-hide-results t)
+  (auto-package-update-maybe))
+
+(use-package delight
+  :ensure t)
+
+(use-package emacs
+  :delight
+  (auto-fill-function " AF")
+  (editor-config)
+  (emacs-lisp-mode "elisp" :major))
 
 (use-package zenburn-theme
   :ensure t
   :config
   (load-theme 'zenburn t)
   )
+
+;; Remove the mode name for projectile-mode, but show the project name.
+(use-package projectile
+  :ensure t
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  ("s-p" . projectile-command-map)
+  :delight '(:eval (concat " " (projectile-project-name)))
+  :config (projectile-mode 1))
+
+
+(setq helm-mode-fuzzy-match t)
+(setq helm-completion-in-region-fuzzy-match t)
+(setq helm-candidate-number-limit 100)
+(setq helm-autoresize-max-height 25)
+(setq helm-autoresize-min-height 20)
+(use-package helm
+  :ensure t
+  :bind (("M-x" . helm-M-x)
+         ("C-x C-f" . helm-find-files)
+         ("C-x C-d" . helm-browse-project)
+         ("C-x C-b" . helm-buffers-list)
+         ("C-x r b" . helm-filtered-bookmarks)
+         ([S-f10] . helm-recentf))
+  :config (require 'helm-config))
+
+(use-package helm-ls-git
+  :ensure t
+  :after helm)
+
+(use-package helm-system-packages
+  :ensure t
+  :after (helm system-packages))
+
+;; (use-package helm-ag
+;;   :ensure t
+;;   :after helm
+;;   :ensure-system-package
+;;   (ag . silversearcher-ag))
+
+(use-package helm-flyspell
+  :ensure t
+  :after helm
+  :bind ("C-;" . helm-flyspell-correct))
+
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :config
+  (progn
+    (setq treemacs-collapse-dirs                 (if (treemacs--find-python3) 3 0)
+          treemacs-deferred-git-apply-delay      0.5
+          treemacs-display-in-side-window        t
+          treemacs-eldoc-display                 t
+          treemacs-file-event-delay              5000
+          treemacs-file-follow-delay             0.2
+          treemacs-follow-after-init             t
+          treemacs-git-command-pipe              ""
+          treemacs-goto-tag-strategy             'refetch-index
+          treemacs-indentation                   2
+          treemacs-indentation-string            " "
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-missing-project-action        'ask
+          treemacs-no-png-images                 nil
+          treemacs-no-delete-other-windows       t
+          treemacs-project-follow-cleanup        nil
+          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-position                      'left
+          treemacs-recenter-distance             0.1
+          treemacs-recenter-after-file-follow    nil
+          treemacs-recenter-after-tag-follow     nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
+          treemacs-show-cursor                   nil
+          treemacs-show-hidden-files             t
+          treemacs-silent-filewatch              nil
+          treemacs-silent-refresh                nil
+          treemacs-sorting                       'alphabetic-desc
+          treemacs-space-between-root-nodes      t
+          treemacs-tag-follow-cleanup            t
+          treemacs-tag-follow-delay              1.5
+          treemacs-width                         35)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode t)
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null (treemacs--find-python3))))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+;; (use-package treemacs-magit
+;;   :after treemacs magit
+;;   :ensure t)
+
+
+
+;; With use-package:
+(use-package company-box
+	:ensure t
+  :hook (company-mode . company-box-mode))
+
+
+(use-package lsp-mode
+  :ensure t
+  :hook (f90-mode . lsp-deferred)
+  :commands (lsp lsp-deferred))
+
+;; optionally
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp)
+(use-package helm-lsp
+  :ensure t
+  :commands helm-lsp-workspace-symbol)
+(use-package lsp-treemacs
+  :ensure t
+  :commands lsp-treemacs-errors-list)
+;; optionally if you want to use debugger
+;; (use-package dap-mode
+;;   :ensure t)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
 
 ;; Starts the Emacs server when window system
 (use-package edit-server
@@ -72,18 +262,23 @@
   :ensure t
   :config (ws-butler-global-mode))
 
+(use-package ag
+  :ensure t
+  :ensure-system-package
+  (ag . silversearcher-ag)
+  :config
+  (setq ag-highlight-search t)
+  (setq ag-reuse-buffers 't)
+  )
+
 (use-package editorconfig
-  :ensure ws-butler
+  :ensure t
+  :after ws-butler
   :init
   (setq editorconfig-trim-whitespaces-mode
          'ws-butler-mode)
   :config
   (editorconfig-mode 1)
-  (add-to-list 'editorconfig-indentation-alist
-               '(f90-mode
-                 f90-associate-indent f90-continuation-indent
-                 f90-critical-indent f90-do-indent f90-if-indent
-                 f90-program-indent f90-type-indent))
   ;; Always use tabs for Makefiles
   (add-hook 'editorconfig-hack-properties-functions
 	    '(lambda (props)
@@ -92,14 +287,9 @@
 
 ;; misc variables
 (setq f90-smart-end-names nil)
-(when window-system
-  (set-frame-position (selected-frame) 0 0)
-  (set-frame-size (selected-frame) 192 71))
-;; see also default-frame-alist and initial-frame-alist
-(setq redisplay-dont-pause t) ; better performance, maybe...
+(setq f90-beginning-ampersand nil)
 (setq transient-mark-mode t)
-(setq tab-width 4)          ; and 4 char wide for TAB
-(setq indent-tabs-mode nil) ; And force use of spaces
+(setq tab-width 2)          ; and 4 char wide for TAB
 (turn-on-font-lock)         ; same as syntax on in Vim
 (setq inhibit-startup-screen t)
 (setq vc-follow-symlinks t)
@@ -128,7 +318,7 @@
 (global-set-key "\C-cm" 'rcompile)
 (setq ediff-split-window-function 'split-window-horizontally)
 (setq imenu-auto-rescan t)
-(setq imenu-max-items 50)
+(setq imenu-max-items 80)
 (setq imenu-sort-function 'imenu--sort-by-name)
 ;; backups
 (setq make-backup-files 'non-nil)
@@ -337,7 +527,8 @@
 
 ;; Flymake
 (use-package flymake-cursor
-  :ensure flymake
+  :ensure t
+  :after flymake
   :init
   (setq flymake-run-in-place nil) ; nice default 4 tramp, .dir-locals.el overrides
   :bind ("C-c n" . flymake-goto-next-error)
@@ -375,6 +566,7 @@
 ;; See https://github.com/Lindydancer/cmake-font-lock/issues/5
 (use-package cmake-mode
   :ensure t
+  :ensure-system-package cmake
   :commands (cmake-mode)
   :mode (("CMakeLists\\.txt\\'" . cmake-mode)
 		("\\.cmake\\'" . cmake-mode))
@@ -411,8 +603,6 @@
 (use-package elpy
   :ensure t
   :commands (elpy-use-ipython)
-  :init
-  (elpy-enable)
   :config
   (when (require 'flycheck nil t)
     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
@@ -460,7 +650,8 @@
   :defer t)
 
 (use-package git-messenger
-  :ensure t)
+  :ensure t
+  :ensure-system-package git)
 
 (use-package github-browse-file
   :ensure t)
@@ -468,35 +659,11 @@
 
 ;; Recent file menu/opening from mastering emacs
 (require 'recentf)
-;; get rid of `find-file-read-only' and replace it with something
-;; more useful.
-(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
 ;; enable recent files mode.
 (recentf-mode t)
-; 100 files ought to be enough.
-(setq recentf-max-saved-items 100)
-(defun ido-recentf-open ()
-  "Use `ido-completing-read' to \\[find-file] a recent file"
-  (interactive)
-  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-      (message "Opening file...")
-    (message "Aborting")))
-;; http://www.masteringemacs.org/articles/2011/01/27/find-files-faster-recent-files-package/
-;; Give IDO mode a shot
-(setq ido-everywhere t)
-(setq ido-max-directory-size 100000)
-(ido-mode (quote both))
-; Use the current window when visiting files and buffers with ido
-(setq ido-default-file-method 'selected-window)
-(setq ido-default-buffer-method 'selected-window)
-(setq ido-enable-flex-matching t)
-(ido-mode 1)
-(setq ido-use-filename-at-point 'guess)
-(setq ido-file-extensions-order '(".F90" ".f90" ".pbs" ".inp" ".sh" ".el" ".py" ".cmd" ".txt"))
-(setq ido-create-new-buffer 'prompt)
-;;(setq ido-ignore-extensions t)
-;;http://www.masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/
-;; Hippie expand customizations
+;; get rid of `find-file-read-only' and replace it with something
+;; more useful.
+
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev-visible try-expand-dabbrev try-expand-all-abbrevs try-expand-dabbrev-from-kill try-expand-dabbrev-all-buffers try-complete-file-name-partially try-complete-file-name try-expand-list try-expand-line))
 
@@ -540,7 +707,6 @@
 ;; F90 mode settings
 (add-hook 'f90-mode-hook
           '(lambda ()
-	     (setq f90-beginning-ampersand nil)
 	     (f90-add-imenu-menu)
 ;;	     (abbrev-mode 1)
 	     (hide-ifdef-mode)
@@ -559,41 +725,46 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
-   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
+	 ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-safe-themes
-   (quote
-    ("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
+	 (quote
+		("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
  '(fci-rule-color "#383838")
  '(nrepl-message-colors
-   (quote
-    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+	 (quote
+		("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+ '(package-archives
+	 (quote
+		(("gnu" . "http://elpa.gnu.org/packages/")
+		 ("melpa" . "https://melpa.org/packages/")
+		 ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
-   (quote
-    (ws-butler markdown-toc docker dockerfile-mode ein elpy cmake-font-lock travis smart-tab highlight-parentheses auctex zenburn-theme exec-path-from-shell)))
+	 (quote
+		(company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis smart-tab highlight-parentheses auctex exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
-   (quote
-    ((20 . "#BC8383")
-     (40 . "#CC9393")
-     (60 . "#DFAF8F")
-     (80 . "#D0BF8F")
-     (100 . "#E0CF9F")
-     (120 . "#F0DFAF")
-     (140 . "#5F7F5F")
-     (160 . "#7F9F7F")
-     (180 . "#8FB28F")
-     (200 . "#9FC59F")
-     (220 . "#AFD8AF")
-     (240 . "#BFEBBF")
-     (260 . "#93E0E3")
-     (280 . "#6CA0A3")
-     (300 . "#7CB8BB")
-     (320 . "#8CD0D3")
-     (340 . "#94BFF3")
-     (360 . "#DC8CC3"))))
+	 (quote
+		((20 . "#BC8383")
+		 (40 . "#CC9393")
+		 (60 . "#DFAF8F")
+		 (80 . "#D0BF8F")
+		 (100 . "#E0CF9F")
+		 (120 . "#F0DFAF")
+		 (140 . "#5F7F5F")
+		 (160 . "#7F9F7F")
+		 (180 . "#8FB28F")
+		 (200 . "#9FC59F")
+		 (220 . "#AFD8AF")
+		 (240 . "#BFEBBF")
+		 (260 . "#93E0E3")
+		 (280 . "#6CA0A3")
+		 (300 . "#7CB8BB")
+		 (320 . "#8CD0D3")
+		 (340 . "#94BFF3")
+		 (360 . "#DC8CC3"))))
  '(vc-annotate-very-old-color "#DC8CC3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
