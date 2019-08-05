@@ -18,7 +18,7 @@ There are two things you can do about this warning:
   (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+    (add-to-list 'package-archives "http://elpa.gnu.org/packages/")))
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -38,22 +38,33 @@ There are two things you can do about this warning:
 (setq debug-on-error t) ; set this to get stack traces on errors
 
 (require 'bind-key)
+(require 'delight)
+
+;; Use shell/env path for exec-path
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
 
 (use-package system-packages
   :ensure t
   :init
   (if (eq system-type 'darwin) (setq system-packages-package-manager 'brew)
-    (setq system-packages-use-sudo t)))
+    (setq system-packages-use-sudo t))
+  :after exec-path-from-shell)
 
 (use-package use-package-ensure-system-package
-  :ensure t)
+  :ensure t
+  :after system-packages)
+
 
 ;; Always try to update packages
 (use-package auto-package-update
   :config
   (setq auto-package-update-delete-old-versions t)
   (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
+  (auto-package-update-maybe)
+  :after system-packages)
 
 (use-package delight
   :ensure t)
@@ -70,30 +81,64 @@ There are two things you can do about this warning:
   (load-theme 'zenburn t)
   )
 
-;; Remove the mode name for projectile-mode, but show the project name.
-(use-package projectile
+(use-package beacon
   :ensure t
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  ("s-p" . projectile-command-map)
-  :delight '(:eval (concat " " (projectile-project-name)))
-  :config (projectile-mode 1))
+  :init
+  (beacon-mode 1)
+  (setq beacon-blink-duration 0.4)
+  (setq beacon-blink-when-point-moves-vertically 2)
+  (setq beacon-blink-when-point-moves-horizontally 2)
+  (setq beacon-size 20))
 
-
-(setq helm-mode-fuzzy-match t)
-(setq helm-completion-in-region-fuzzy-match t)
-(setq helm-candidate-number-limit 100)
-(setq helm-autoresize-max-height 25)
-(setq helm-autoresize-min-height 20)
 (use-package helm
   :ensure t
-  :bind (("M-x" . helm-M-x)
-         ("C-x C-f" . helm-find-files)
-         ("C-x C-d" . helm-browse-project)
-         ("C-x C-b" . helm-buffers-list)
-         ("C-x r b" . helm-filtered-bookmarks)
-         ([S-f10] . helm-recentf))
-  :config (require 'helm-config))
+  :bind (("C-c h o" . helm-occur)
+	 ("C-c h x" . helm-register)
+	 ("C-c h g" . helm-google-suggest)
+	 ("C-c h M-:" . helm-eval-expression-with-eldoc)
+	 ("C-h SPC" . helm-all-mark-rings)
+	 ("M-x"     . helm-M-x)
+	 ("M-y"     . helm-show-kill-ring)
+	 ("C-x b"   . helm-mini)
+	 ("C-x C-f" . helm-find-files)
+	 ("C-x C-d" . helm-browse-project)
+	 ("C-x C-b" . helm-buffers-list)
+	 ("C-x r b" . helm-filtered-bookmarks)
+	 ([S-f10]   . helm-recentf)
+	 :map helm-map
+ 	 ("C-i"     . helm-execute-persistent-action)
+	 ("C-z"     . helm-select-action)
+;	 ("<tab>"   . helm-execute-persistsent-action)
+	 :map minibuffer-local-map
+	 ("C-c C-l" . helm-minibuffer-history)
+	 )
+	:config (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+	)
+(require 'helm)
+(require 'helm-config)
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(helm-mode 1)
+(helm-autoresize-mode 1)
+(setq helm-split-window-in-side-p t) ; open helm buffer inside current window, not occupy whole other window
+(setq helm-move-to-line-cycle-in-source t) ; move to end or beginning of source when reaching top or bottom of source.
+(setq helm-ff-search-library-in-sexp t) ; search for library in `require' and `declare-function' sexp.
+(setq helm-scroll-amount 8) ; scroll 8 lines other window using M-<next>/M-<prior>
+(setq helm-ff-file-name-history-use-recentf t)
+(setq helm-echo-input-in-header-line t)
+(setq helm-completion-in-region-fuzzy-match t)
+(setq helm-completion-in-region-fuzzy-match t)
+(setq helm-completion-in-region-fuzzy-match t)
+(setq helm-autoresize-max-height 0)
+(setq helm-autoresize-min-height 20)
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+(use-package helm-descbinds
+	:ensure t
+	:commands helm-descbinds-mode)
+(helm-descbinds-mode)
 
 (use-package helm-ls-git
   :ensure t
@@ -103,16 +148,53 @@ There are two things you can do about this warning:
   :ensure t
   :after (helm system-packages))
 
-;; (use-package helm-ag
-;;   :ensure t
-;;   :after helm
-;;   :ensure-system-package
-;;   (ag . silversearcher-ag))
+(use-package helm-ag
+   :ensure t
+   :after helm
+   :ensure-system-package ag
+	 :after exec-path-from-shell)
+
+(use-package helm-rg
+   :ensure t
+   :after helm
+   :ensure-system-package
+   (rg . ripgrep)
+	 :after exec-path-from-shell)
+
+(use-package wgrep
+  :ensure t
+  :config (require 'wgrep))
+
+(use-package wgrep-helm
+	:ensure t
+	:after wgrep)
 
 (use-package helm-flyspell
   :ensure t
   :after helm
   :bind ("C-;" . helm-flyspell-correct))
+
+;; Remove the mode name for projectile-mode, but show the project name.
+(use-package projectile
+  :ensure t
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  ("s-p" . projectile-command-map)
+  :init	(setq projectile-enable-caching t)
+  :delight '(:eval (concat " " (projectile-project-name)))
+  :config
+  (projectile-global-mode)
+  :after helm
+  )
+
+(use-package helm-projectile
+  :ensure t
+  :init
+  (setq projectile-completion-system 'helm)
+  (setq projectile-switch-project-action 'helm-projectile)
+  :config
+  (helm-projectile-on))
+
 
 (use-package treemacs
   :ensure t
@@ -200,28 +282,91 @@ There are two things you can do about this warning:
   :hook (company-mode . company-box-mode))
 
 
-(use-package lsp-mode
-  :ensure t
-  :hook (f90-mode . lsp-deferred)
-  :commands (lsp lsp-deferred))
+;; (use-package helm-lsp
+;; 	:ensure t
+;; 	:commands helm-lsp-workspace-symbol)
 
-;; optionally
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode)
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp)
-(use-package helm-lsp
-  :ensure t
-  :commands helm-lsp-workspace-symbol)
-(use-package lsp-treemacs
-  :ensure t
-  :commands lsp-treemacs-errors-list)
+;; (use-package lsp-mode
+;;   :requires helm helm-lsp
+;;   :ensure t
+;;   :commands (lsp lsp-deferred)
+;;   :config
+;;   ;; NB: use either projectile-project-root or ffip-get-project-root-directory
+;;   ;;     or any other function that can be used to find the root directory of a project
+;;   (lsp-define-stdio-client lsp-python "python"
+;;                            #'projectile-project-ropot
+;;                            '("pyls"))
+
+;;   ;; make sure this is activated when python-mode is activated
+;;   ;; lsp-python-enable is created by macro above
+;;   (add-hook 'c++-mode-hook #'lsp)
+;;   (add-hook 'python-mode-hook #'lsp)
+;;   (add-hook -f90-mode-hook #'lsp)
+;;   (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
+;;   (setq lsp-prefer-flymake nil) ;; Prefer using lsp-ui (flycheck) over flymake.
+;;   (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+
+;; (use-package lsp-ui
+;;   :requires lsp-mode flycheck
+;;   :config
+
+;; 	(setq lsp-ui-sideline-ignore-duplicate t
+;; 			lsp-ui-doc-enable t
+;; 			lsp-ui-doc-use-childframe t
+;; 			lsp-ui-doc-position 'top
+;; 			lsp-ui-doc-include-signature t
+;; 			lsp-ui-sideline-enable nil
+;; 			lsp-ui-flycheck-enable t
+;; 			lsp-ui-flycheck-list-position 'right
+;; 			lsp-ui-flycheck-live-reporting t
+;; 			lsp-ui-peek-enable t
+;; 			lsp-ui-peek-list-width 60
+;; 			lsp-ui-peek-peek-height 25)
+
+;; 	(add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
 ;; optionally if you want to use debugger
 ;; (use-package dap-mode
 ;;   :ensure t)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+(use-package company
+  :config
+  ;; Trigger completion immediately.
+  (setq company-idle-delay 0.2)
+  ;; Number the candidates (use M-1, M-2 etc to select completions).
+  (setq company-show-numbers t)
+  ;; Use the tab-and-go frontend.
+  ;; Allows TAB to select and complete at the same time.
+  ;;	(company-tng-configure-default)
+  (setq company-frontends
+	'(;company-tng-frontend
+	  company-pseudo-tooltip-frontend
+	  company-echo-metadata-frontend))
+  (global-company-mode 1)
+  (global-set-key (kbd "C-<tab>") 'company-complete))
+
+;; (use-package company-tabnine
+;; 	:ensure t
+;; 	:requires company
+;; 	:config
+;; 	(push 'company-tabnine company-backends))
+
+;; (use-package company-lsp
+;;   :ensure t
+;;   :requires company
+;;   :config
+;;   (push 'company-lsp company-backends)
+
+;;    ;; Disable client-side cache because the LSP server does a better job.
+;;   (setq company-transformers nil
+;;         company-lsp-async t
+;;         company-lsp-cache-candidates nil))
+
+;; 	(use-package lsp-treemacs
+;; 		:ensure t
+;; 		:commands lsp-treemacs-errors-list)
 
 
 ;; Starts the Emacs server when window system
@@ -231,13 +376,6 @@ There are two things you can do about this warning:
   :init
   (add-hook 'after-init-hook 'server-start t)
   (add-hook 'after-init-hook 'edit-server-start t))
-
-;; Use shell/env path for exec-path
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
 
 ;; Install macOS specific helper packages
 (use-package osx-clipboard
@@ -531,8 +669,8 @@ There are two things you can do about this warning:
   :after flymake
   :init
   (setq flymake-run-in-place nil) ; nice default 4 tramp, .dir-locals.el overrides
-  :bind ("C-c n" . flymake-goto-next-error)
-  :bind ("C-c p" . flymake-goto-prev-error)
+  :bind ("C-c f n" . flymake-goto-next-error)
+  :bind ("C-c f p" . flymake-goto-prev-error)
   )
 
 ;; Use flycheck for some stuff
@@ -592,12 +730,12 @@ There are two things you can do about this warning:
   :ensure t
   :init (global-highlight-parentheses-mode))
 
-(use-package smart-tab
-  :ensure t
-  :commands (global-smart-tab-mode)
-  :init
-  (global-smart-tab-mode 1)
-  (setq smart-tab-using-hippie-expand t))
+;; (use-package smart-tab
+;;   :ensure t
+;;   :commands (global-smart-tab-mode)
+;;   :init
+;;   (global-smart-tab-mode 1)
+;;   (setq smart-tab-using-hippie-expand t))
 
 
 (use-package elpy
@@ -725,46 +863,49 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
-	 ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
+   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
+ '(column-number-mode t)
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-safe-themes
-	 (quote
-		("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
+   (quote
+    ("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
  '(fci-rule-color "#383838")
  '(nrepl-message-colors
-	 (quote
-		("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-archives
-	 (quote
-		(("gnu" . "http://elpa.gnu.org/packages/")
-		 ("melpa" . "https://melpa.org/packages/")
-		 ("melpa-stable" . "https://stable.melpa.org/packages/"))))
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")
+     ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
-	 (quote
-		(company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis smart-tab highlight-parentheses auctex exec-path-from-shell)))
+   (quote
+    (helm-ag projectile-ripgrep ripgrep helm-rg wgrep-helm wgrep-ag wgrep company-tabnine helm-projectile company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis smart-tab highlight-parentheses auctex exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
+ '(save-place-mode t)
+ '(tool-bar-mode nil)
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
-	 (quote
-		((20 . "#BC8383")
-		 (40 . "#CC9393")
-		 (60 . "#DFAF8F")
-		 (80 . "#D0BF8F")
-		 (100 . "#E0CF9F")
-		 (120 . "#F0DFAF")
-		 (140 . "#5F7F5F")
-		 (160 . "#7F9F7F")
-		 (180 . "#8FB28F")
-		 (200 . "#9FC59F")
-		 (220 . "#AFD8AF")
-		 (240 . "#BFEBBF")
-		 (260 . "#93E0E3")
-		 (280 . "#6CA0A3")
-		 (300 . "#7CB8BB")
-		 (320 . "#8CD0D3")
-		 (340 . "#94BFF3")
-		 (360 . "#DC8CC3"))))
+   (quote
+    ((20 . "#BC8383")
+     (40 . "#CC9393")
+     (60 . "#DFAF8F")
+     (80 . "#D0BF8F")
+     (100 . "#E0CF9F")
+     (120 . "#F0DFAF")
+     (140 . "#5F7F5F")
+     (160 . "#7F9F7F")
+     (180 . "#8FB28F")
+     (200 . "#9FC59F")
+     (220 . "#AFD8AF")
+     (240 . "#BFEBBF")
+     (260 . "#93E0E3")
+     (280 . "#6CA0A3")
+     (300 . "#7CB8BB")
+     (320 . "#8CD0D3")
+     (340 . "#94BFF3")
+     (360 . "#DC8CC3"))))
  '(vc-annotate-very-old-color "#DC8CC3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
