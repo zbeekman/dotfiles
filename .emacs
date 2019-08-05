@@ -69,6 +69,87 @@ There are two things you can do about this warning:
 (use-package delight
   :ensure t)
 
+(use-package all-the-icons
+	:ensure t)
+
+(use-package doom-modeline
+	:ensure t
+	:init
+	;; How tall the mode-line should be. It's only respected in GUI.
+	 ;; If the actual char height is larger, it respects the actual height.
+	 ;;(setq doom-modeline-height 25)
+
+	 ;; How wide the mode-line bar should be. It's only respected in GUI.
+	 ;;(setq doom-modeline-bar-width 3)
+
+	 ;; Determines the style used by `doom-modeline-buffer-file-name'.
+	 ;;
+	 ;; Given ~/Projects/FOSS/emacs/lisp/comint.el
+	 ;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+	 ;;   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
+	 ;;   truncate-with-project => emacs/l/comint.el
+	 ;;   truncate-except-project => ~/P/F/emacs/l/comint.el
+	 ;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
+	 ;;   truncate-all => ~/P/F/e/l/comint.el
+	 ;;   relative-from-project => emacs/lisp/comint.el
+	 ;;   relative-to-project => lisp/comint.el
+	 ;;   file-name => comint.el
+	 ;;   buffer-name => comint.el<2> (uniquify buffer name)
+	 (setq doom-modeline-buffer-file-name-style 'truncate-except-project)
+
+	 ;; Whether display icons in mode-line or not.
+	 (setq doom-modeline-icon t)
+
+	 ;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
+	 (setq doom-modeline-major-mode-icon t)
+
+	 ;; Whether display color icons for `major-mode'. It respects
+	 ;; `doom-modeline-icon' and `all-the-icons-color-icons'.
+	 (setq doom-modeline-major-mode-color-icon t)
+
+	 ;; Whether display icons for buffer states. It respects `doom-modeline-icon'.
+	 (setq doom-modeline-buffer-state-icon t)
+
+	 ;; Whether display buffer modification icon. It respects `doom-modeline-icon'
+	 ;; and `doom-modeline-buffer-state-icon'.
+	 (setq doom-modeline-buffer-modification-icon t)
+
+	 ;; Whether display minor modes in mode-line or not.
+	 (setq doom-modeline-minor-modes nil)
+
+	 ;; If non-nil, a word count will be added to the selection-info modeline segment.
+	 (setq doom-modeline-enable-word-count nil)
+
+	 ;; Whether display buffer encoding.
+	 (setq doom-modeline-buffer-encoding t)
+
+	 ;; Whether display indentation information.
+	 (setq doom-modeline-indent-info nil)
+
+	 ;; If non-nil, only display one number for checker information if applicable.
+	 (setq doom-modeline-checker-simple-format t)
+
+	 ;; The maximum displayed length of the branch name of version control.
+	 (setq doom-modeline-vcs-max-length 24)
+
+	 ;; Whether display perspective name or not. Non-nil to display in mode-line.
+	 (setq doom-modeline-persp-name t)
+
+	 ;; Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'
+	 ;;(setq doom-modeline-persp-name-icon nil)
+
+	 ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
+	 (setq doom-modeline-lsp t)
+
+	 ;; Whether display environment version or not
+	 (setq doom-modeline-env-version t)
+
+	 ;; What to dispaly as the version while a new one is being loaded
+	 (setq doom-modeline-env-load-string "...")
+
+	:hook (after-init . doom-modeline-mode)
+	:requires all-the-icons)
+
 (use-package emacs
   :delight
   (auto-fill-function " AF")
@@ -89,6 +170,15 @@ There are two things you can do about this warning:
   (setq beacon-blink-when-point-moves-vertically 2)
   (setq beacon-blink-when-point-moves-horizontally 2)
   (setq beacon-size 20))
+
+(use-package smartparens-config
+  :ensure smartparens
+  :config (progn
+						(show-smartparens-global-mode t)
+						(require 'smartparens-config)))
+
+(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 
 (use-package helm
   :ensure t
@@ -236,13 +326,13 @@ There are two things you can do about this warning:
           treemacs-space-between-root-nodes      t
           treemacs-tag-follow-cleanup            t
           treemacs-tag-follow-delay              1.5
-          treemacs-width                         35)
+          treemacs-width                         38)
 
     ;; The default width and height of the icons is 22 pixels. If you are
     ;; using a Hi-DPI display, uncomment this to double the icon size.
     ;;(treemacs-resize-icons 44)
 
-    (treemacs-follow-mode t)
+    (treemacs-tag-follow-mode t)
     (treemacs-filewatch-mode t)
     (treemacs-fringe-indicator-mode t)
     (pcase (cons (not (null (executable-find "git")))
@@ -456,7 +546,7 @@ There are two things you can do about this warning:
 (global-set-key "\C-cm" 'rcompile)
 (setq ediff-split-window-function 'split-window-horizontally)
 (setq imenu-auto-rescan t)
-(setq imenu-max-items 80)
+(setq imenu-max-items 300)
 (setq imenu-sort-function 'imenu--sort-by-name)
 ;; backups
 (setq make-backup-files 'non-nil)
@@ -870,6 +960,7 @@ There are two things you can do about this warning:
  '(custom-safe-themes
 	 (quote
 		("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
+ '(doom-modeline-mode t)
  '(fci-rule-color "#383838")
  '(nrepl-message-colors
 	 (quote
@@ -881,7 +972,7 @@ There are two things you can do about this warning:
 		 ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
 	 (quote
-		(helm-ag projectile-ripgrep ripgrep helm-rg wgrep-helm wgrep-ag wgrep company-tabnine helm-projectile company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis smart-tab highlight-parentheses auctex exec-path-from-shell)))
+		(smartparens doom-themes doom-modeline all-the-icons helm-ag projectile-ripgrep ripgrep helm-rg wgrep-helm wgrep-ag wgrep company-tabnine helm-projectile company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis smart-tab highlight-parentheses auctex exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(save-place-mode t)
  '(tool-bar-mode nil)
