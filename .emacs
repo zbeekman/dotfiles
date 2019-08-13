@@ -176,9 +176,18 @@ There are two things you can do about this warning:
   :config (progn
 						(show-smartparens-global-mode t)
 						(require 'smartparens-config)))
+(use-package magit
+  :ensure t
+  :bind ("C-x g" . magit-status)
+  )
 
-(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
-(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+(use-package forge
+  :ensure t
+  :after magit)
+
+;; (use-package magit-todos
+;;   :ensure t
+;;   :after magit)
 
 (use-package helm
   :ensure t
@@ -506,7 +515,7 @@ There are two things you can do about this warning:
   (setq editorconfig-trim-whitespaces-mode
          'ws-butler-mode)
   :config
-	;;  (editorconfig-mode 1)
+  (editorconfig-mode 1)
   ;; Always use tabs for Makefiles
   (add-hook 'editorconfig-hack-properties-functions
 	    '(lambda (props)
@@ -953,50 +962,51 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
-	 ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
+   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
  '(column-number-mode t)
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-safe-themes
-	 (quote
-		("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
+   (quote
+    ("190a9882bef28d7e944aa610aa68fe1ee34ecea6127239178c7ac848754992df" default)))
  '(doom-modeline-mode t)
  '(fci-rule-color "#383838")
  '(nrepl-message-colors
-	 (quote
-		("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-archives
-	 (quote
-		(("gnu" . "http://elpa.gnu.org/packages/")
-		 ("melpa" . "https://melpa.org/packages/")
-		 ("melpa-stable" . "https://stable.melpa.org/packages/"))))
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/")
+     ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
-	 (quote
-		(smartparens doom-themes doom-modeline all-the-icons helm-ag projectile-ripgrep ripgrep helm-rg wgrep-helm wgrep-ag wgrep company-tabnine helm-projectile company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis smart-tab highlight-parentheses auctex exec-path-from-shell)))
+   (quote
+    (magit-todos forge magit smartparens doom-modeline all-the-icons helm-ag projectile-ripgrep ripgrep helm-rg wgrep-helm wgrep-ag wgrep company-tabnine helm-projectile company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis highlight-parentheses auctex exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(save-place-mode t)
  '(tool-bar-mode nil)
+ '(treemacs-tag-follow-mode t)
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
-	 (quote
-		((20 . "#BC8383")
-		 (40 . "#CC9393")
-		 (60 . "#DFAF8F")
-		 (80 . "#D0BF8F")
-		 (100 . "#E0CF9F")
-		 (120 . "#F0DFAF")
-		 (140 . "#5F7F5F")
-		 (160 . "#7F9F7F")
-		 (180 . "#8FB28F")
-		 (200 . "#9FC59F")
-		 (220 . "#AFD8AF")
-		 (240 . "#BFEBBF")
-		 (260 . "#93E0E3")
-		 (280 . "#6CA0A3")
-		 (300 . "#7CB8BB")
-		 (320 . "#8CD0D3")
-		 (340 . "#94BFF3")
-		 (360 . "#DC8CC3"))))
+   (quote
+    ((20 . "#BC8383")
+     (40 . "#CC9393")
+     (60 . "#DFAF8F")
+     (80 . "#D0BF8F")
+     (100 . "#E0CF9F")
+     (120 . "#F0DFAF")
+     (140 . "#5F7F5F")
+     (160 . "#7F9F7F")
+     (180 . "#8FB28F")
+     (200 . "#9FC59F")
+     (220 . "#AFD8AF")
+     (240 . "#BFEBBF")
+     (260 . "#93E0E3")
+     (280 . "#6CA0A3")
+     (300 . "#7CB8BB")
+     (320 . "#8CD0D3")
+     (340 . "#94BFF3")
+     (360 . "#DC8CC3"))))
  '(vc-annotate-very-old-color "#DC8CC3"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
