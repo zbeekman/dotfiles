@@ -38,7 +38,9 @@ There are two things you can do about this warning:
 (setq debug-on-error t) ; set this to get stack traces on errors
 
 (require 'bind-key)
-(require 'delight)
+
+(use-package delight
+  :ensure t)
 
 ;; Use shell/env path for exec-path
 (use-package exec-path-from-shell
@@ -60,14 +62,12 @@ There are two things you can do about this warning:
 
 ;; Always try to update packages
 (use-package auto-package-update
+  :ensure t
   :config
   (setq auto-package-update-delete-old-versions t)
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe)
   :after system-packages)
-
-(use-package delight
-  :ensure t)
 
 (use-package all-the-icons
 	:ensure t)
@@ -859,13 +859,13 @@ There are two things you can do about this warning:
                "jupyter")
   )
 
-(use-package ein
-  :ensure t
-  :init
-  (setq
-   ein:use-auto-complete t
-   ein:complete-on-dot t)
-  )
+;;(use-package ein
+;;  :ensure t
+;;  :init
+;;  (setq
+;;   ein:use-auto-complete t
+;;   ein:complete-on-dot t)
+;;  )
 
 (use-package term
   :ensure t
