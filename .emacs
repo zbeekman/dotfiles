@@ -174,16 +174,16 @@ There are two things you can do about this warning:
 (use-package smartparens-config
   :ensure smartparens
   :config (progn
-						(show-smartparens-global-mode t)
-						(require 'smartparens-config)))
+	    (show-smartparens-global-mode t)
+	    (require 'smartparens-config)))
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit-status)
   )
 
-(use-package forge
-  :ensure t
-  :after magit)
+;; (use-package forge
+;;   :ensure t
+;;   :after magit)
 
 ;; (use-package magit-todos
 ;;   :ensure t
@@ -526,6 +526,8 @@ There are two things you can do about this warning:
 		 (puthash 'indent_style "tab" props)))))
 
 ;; misc variables
+(setq-default indent-tabs-mode nil)
+(setq-default standard-indent 2)
 (setq f90-smart-end-names nil)
 (setq f90-beginning-ampersand nil)
 (setq transient-mark-mode t)
@@ -878,23 +880,23 @@ There are two things you can do about this warning:
 	("M-p" . term-send-up)
 	("M-n" . term-send-down)))
 
-(use-package bug-reference-github
-  :ensure t
-  :init
-  (add-hook 'find-file-hook 'bug-reference-github-set-url-format)
-  (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
-  )
+;; (use-package bug-reference-github
+;;   :ensure t
+;;   :init
+;;   (add-hook 'find-file-hook 'bug-reference-github-set-url-format)
+;;   (add-hook 'prog-mode-hook 'bug-reference-prog-mode)
+;;   )
 
-(use-package gh
-  :ensure t
-  :defer t)
+;; (use-package gh
+;;   :ensure t
+;;   :defer t)
 
 (use-package git-messenger
   :ensure t
   :ensure-system-package git)
 
-(use-package github-browse-file
-  :ensure t)
+;; (use-package github-browse-file
+;;   :ensure t)
 
 
 ;; Recent file menu/opening from mastering emacs
@@ -984,7 +986,7 @@ There are two things you can do about this warning:
 		 ("melpa-stable" . "https://stable.melpa.org/packages/"))))
  '(package-selected-packages
 	 (quote
-		(magit-todos forge magit smartparens doom-modeline all-the-icons helm-ag projectile-ripgrep ripgrep helm-rg wgrep-helm wgrep-ag wgrep company-tabnine helm-projectile company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis highlight-parentheses auctex exec-path-from-shell)))
+		(magit smartparens doom-modeline all-the-icons helm-ag projectile-ripgrep ripgrep helm-rg wgrep-helm wgrep-ag wgrep company-tabnine helm-projectile company-box lsp-treemacs helm-lsp company-lsp lsp-ui spinner lsp-mode treemacs-icons-dired treemacs-projectile treemacs helm-system-packages helm-ls-git projectile helm-flyspell helm flymake-cursor use-package auto-package-update delight tide tss ws-butler markdown-toc docker dockerfile-mode ein cmake-font-lock travis highlight-parentheses auctex exec-path-from-shell)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(safe-local-variable-values
 	 (quote
