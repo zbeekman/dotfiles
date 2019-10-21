@@ -35,12 +35,12 @@ wwo-lang=en
 
 
 # The following options are probably deprecated and not used currently!
-owm-lang=en
-wwo-debug=false
-aat-monochrome=false
 forecast-api-key=9126b02c55e31e6fe70364900444a0ad
-owm-api-key=e0b566092f24190124a170d46624b5e2
-forecast-lang=en
+forecast-debug=false
+aat-monochrome=false
 location=38.907009,-77.029324
 owm-debug=false
-forecast-debug=false
+owm-api-key=e0b566092f24190124a170d46624b5e2
+forecast-lang=en
+owm-lang=en
+wwo-debug=false

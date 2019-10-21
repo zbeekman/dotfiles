@@ -402,6 +402,11 @@ if [[ $- == *i* ]] ; then
 
     export HOMEBREW_MIANTAINER=1
     export HOMEBREW_BINTRAY_USER=zbeekman
+    export HOMEBREW_DISPLAY_INSTALL_TIMES=1
+    export HOMEBREW_NO_INSECURE_REDIRECT=1
+    export HOMEBREW_CURL_RETRIES=4
+    export HOMEBREW_BAT=1
+    export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 
     # shellcheck source=/Users/ibeekman/.fzf.bash
     source_if_present ~/.fzf.bash
