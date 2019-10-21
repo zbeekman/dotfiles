@@ -408,6 +408,8 @@ if [[ $- == *i* ]] ; then
     export HOMEBREW_BAT=1
     export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK=1
 
+    export BAT_THEME=zenburn
+
     # shellcheck source=/Users/ibeekman/.fzf.bash
     source_if_present ~/.fzf.bash
 fi
