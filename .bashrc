@@ -426,3 +426,16 @@ if [[ "${DEBUG}" == true ]]; then
 fi
 
 source_if_present /usr/local/opt/modules/init/bash
+
+if command -v dircolors > /dev/null 2>&1; then
+    export DIR_COLOR_PROG=dir_colors
+elif command -v gdircolors > /dev/null 2>&1; then
+    export DIR_COLOR_PROG=gdir_colors
+fi
+if [ -r "~/.dir_colors" ] ; then
+    eval $(${DIR_COLOR_PROG} ~/.dir_colors)
+fi
+
+# Wasmer
+export WASMER_DIR="/Users/ibeekman/.wasmer"
+[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
