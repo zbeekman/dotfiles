@@ -7,6 +7,9 @@ if [ "$(uname)" = "Linux" ] ; then
     setxkbmap -layout us -option ctrl:nocaps
 fi
 
+# Turn off the damn wysiwyg slack editor
+export SLACK_DEVELOPER_MENU=true
+
 emacs --help > /dev/null 2>&1 && export EDITOR="emacs -nw" && export VISUAL=emacs
 less --help > /dev/null 2>&1 && export PAGER=less
 
