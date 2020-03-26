@@ -9,6 +9,7 @@ fi
 
 emacs --help > /dev/null 2>&1 && export EDITOR="emacs -nw" && export VISUAL=emacs
 less --help > /dev/null 2>&1 && export PAGER=less
+
 if [ -d "${WORKDIR}" ]; then # DSRCs
   export TMPDIR="${WORKDIR}/tmp"
   export TMP="${WORKDIR}/tmp"
