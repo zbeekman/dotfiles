@@ -446,11 +446,19 @@ There are two things you can do about this warning:
   (global-company-mode 1)
   (global-set-key (kbd "M-<tab>") 'company-complete))
 
-(use-package company-tabnine
-	:ensure t
-	:requires company
-	:config
-	(push 'company-tabnine company-backends))
+(use-package company-quickhelp
+  :ensure t
+  :defer t
+  :requires company
+  :config
+  (add-hook 'company-mode-hook 'company-quickhelp-mode)
+  )
+
+;; (use-package company-tabnine
+;; 	:ensure t
+;; 	:requires company
+;; 	:config
+;; 	(push 'company-tabnine company-backends))
 
 ;; (use-package company-lsp
 ;;   :ensure t
@@ -841,22 +849,42 @@ There are two things you can do about this warning:
 
 (use-package elpy
   :ensure t
-  :commands (elpy-use-ipython)
+  :defer t
+  :init
+  (advice-add 'python-mode :before 'elpy-enable)
+  (advice-add 'elpy-shell--insert-and-font-lock
+              :around (lambda (f string face &optional no-font-lock)
+                        (if (not (eq face 'comint-highlight-input))
+                            (funcall f string face no-font-lock)
+                          (funcall f string face t)
+                          (python-shell-font-lock-post-command-hook))))
+
+  (advice-add 'comint-send-input
+              :around (lambda (f &rest args)
+                        (if (eq major-mode 'inferior-python-mode)
+                            (cl-letf ((g (symbol-function 'add-text-properties))
+                                      ((symbol-function 'add-text-properties)
+                                       (lambda (start end properties &optional object)
+                                         (unless (eq (nth 3 properties) 'comint-highlight-input)
+                                           (funcall g start end properties object)))))
+                              (apply f args))
+                          (apply f args))))
   :config
-  (when (require 'flycheck nil t)
+  (when (load "flycheck" t t)
     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
     (add-hook 'elpy-mode-hook 'flycheck-mode))
+  (add-hook 'elpy-mode-hook 'hs-minor-mode)
   )
 
-(use-package python
-  :ensure t
-  :config
-  (setq python-shell-interpreter "jupyter"
-	python-shell-interpreter-args "console --simple-prompt"
-	python-shell-prompt-detect-failure-warning nil)
-  (add-to-list 'python-shell-completion-native-disabled-interpreters
-               "jupyter")
-  )
+;; (use-package python
+;;   :ensure t
+;;   :config
+;;   (setq python-shell-interpreter "jupyter"
+;; 	python-shell-interpreter-args "console --simple-prompt"
+;; 	python-shell-prompt-detect-failure-warning nil)
+;;   (add-to-list 'python-shell-completion-native-disabled-interpreters
+;;                "jupyter")
+;;   )
 
 ;;(use-package ein
 ;;  :ensure t
@@ -963,9 +991,18 @@ There are two things you can do about this warning:
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (company-quickhelp zenburn-theme yaml-mode ws-butler wgrep-helm use-package-ensure-system-package treemacs-projectile treemacs-icons-dired travis sr-speedbar smartparens osx-trash osx-clipboard markdown-toc magit homebrew-mode highlight-parentheses helm-system-packages helm-rg helm-projectile helm-ls-git helm-descbinds helm-ag git-messenger flymake-cursor flycheck exec-path-from-shell elpy editorconfig edit-server doom-modeline dockerfile-mode docker company-tabnine company-box cmake-font-lock beacon auto-package-update auctex ag)))
  '(safe-local-variable-values
    (quote
-    ((projectile-project-name . "ZstdFortranLib")
+    ((python-shell-interpreter . "~/taucmdr/conda/bin/python")
+     (python-shell-interpreter-args . "-i")
+     (nil)
+     (setq python-shell-interpreter "/Users/ibeekman/taucmdr/conda/bin/python" python-shell-interpreter-args "-i" python-check-command "/Users/ibeekman/taucmdr/conda/bin/pylint")
+     (python-shell-interpreter-args "-i")
+     (python-shell-interpreter . "/Users/ibeekman/taucmdr/conda/bin/python")
+     (projectile-project-name . "ZstdFortranLib")
      (projectile-project-test-cmd . "pipenv run test")
      (projectile-project-compilation-cmd . "pipenv run build")
      (projectile-project-configure-cmd . "pipenv run configure")))))
