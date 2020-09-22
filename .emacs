@@ -15,9 +15,7 @@ There are two things you can do about this warning:
   ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
   (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+)
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -993,7 +991,7 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (company-quickhelp zenburn-theme yaml-mode ws-butler wgrep-helm use-package-ensure-system-package treemacs-projectile treemacs-icons-dired travis sr-speedbar smartparens osx-trash osx-clipboard markdown-toc magit homebrew-mode highlight-parentheses helm-system-packages helm-rg helm-projectile helm-ls-git helm-descbinds helm-ag git-messenger flymake-cursor flycheck exec-path-from-shell elpy editorconfig edit-server doom-modeline dockerfile-mode docker company-tabnine company-box cmake-font-lock beacon auto-package-update auctex ag)))
+    (company-quickhelp zenburn-theme yaml-mode ws-butler wgrep-helm use-package-ensure-system-package treemacs-projectile treemacs-icons-dired travis sr-speedbar smartparens osx-trash osx-clipboard markdown-toc magit homebrew-mode highlight-parentheses helm-system-packages helm-rg helm-projectile helm-ls-git helm-descbinds helm-ag git-messenger flymake-cursor flycheck exec-path-from-shell elpy editorconfig edit-server doom-modeline dockerfile-mode docker cmake-font-lock beacon auto-package-update auctex ag)))
  '(safe-local-variable-values
    (quote
     ((python-shell-interpreter . "~/taucmdr/conda/bin/python")
