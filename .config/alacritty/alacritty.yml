@@ -20,6 +20,9 @@ window:
   dimensions:
     columns: 132
     lines: 32
+  # Allow terminal applications to change Alacritty's window title.
+  dynamic_title: true
+
 
   # Window position (changes require restart)
   #
