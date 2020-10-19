@@ -374,9 +374,9 @@ There are two things you can do about this warning:
 
 
 ;; With use-package:
-(use-package company-box
-  :ensure t
-  :hook (company-mode . company-box-mode))
+;; (use-package company-box
+;;   :ensure t
+;;   :hook (company-mode . company-box-mode))
 
 
 ;; (use-package helm-lsp
