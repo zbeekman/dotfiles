@@ -438,4 +438,4 @@ fi
 
 # Wasmer
 export WASMER_DIR="/Users/ibeekman/.wasmer"
-[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
+[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh" || true
