@@ -1,0 +1,150 @@
+total 8
+drwxr-xr-x  3 ibeekman  staff    96 Nov 16 15:38 1Password 7.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:02 1Password for Windows desktop.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 Adobe Acrobat Reader DC — Boot Camp (Imported).app
+drwxrwxr-x  3 root      wheel    96 Aug 27 19:32 Adobe Acrobat Reader DC.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jul 31 19:58 Alacritty.app
+drwxrwxr-x@ 4 ibeekman  staff   128 Sep  2 16:53 Amidst.app
+drwxr-xr-x  7 root      admin   224 Jun  1  2020 AsciidocFX
+drwxr-xr-x@ 3 ibeekman  staff    96 Oct 23  2018 Authy Desktop.app
+drwxr-xr-x  3 ibeekman  staff    96 Nov 10 20:58 BetterTouchTool.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:50 Blend for Visual Studio.app
+drwxr-xr-x@ 4 ibeekman  staff   128 Apr 20  2020 BlueJeans.app
+drwxr-xr-x@ 3 ibeekman  staff    96 May  5  2020 Brave Browser.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov 18 08:01 CMake.app
+drwxrwxr-x  3 ibeekman  staff    96 May 16  2020 Cisco Webex Meetings.app
+drwxr-xr-x@ 3 ibeekman  staff    96 May 17  2020 CoolTerm.app
+drwxr-xr-x@ 3 ibeekman  admin    96 Apr 25  2020 Criptext.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov 18 09:15 Cryptomator.app
+drwxr-xr-x@ 3 ibeekman  admin    96 May 12  2020 CubicSDR.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jun 25  2019 Cyberduck.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Apr 22  2019 DHS.app
+drwxr-xr-x  3 ibeekman  staff    96 Jun 25  2019 DaisyDisk.app
+drwxr-xr-x  3 root      wheel    96 Sep 26  2018 Do Not Disturb.app
+drwxr-xr-x  3 ibeekman  staff    96 Nov  3 12:25 Docker.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 Dropbox — Boot Camp (Imported).app
+drwxr-xr-x@ 3 ibeekman  staff    96 Dec  3 22:05 Dropbox.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Aug 12 01:15 Emacs.app
+drwxrwxr-x  5 root      admin   160 May 15  2020 Evoluent
+drwxr-xr-x@ 3 ibeekman  staff    96 Jul  3 03:22 Fedora Media Writer.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov  9 21:10 Firefox.app
+drwxr-xr-x  3 ibeekman  admin    96 Oct 13 18:05 FreeCAD.app
+drwxr-xr-x  3 ibeekman  admin    96 Jun 13  2019 GIMP-2.10.app
+drwxr-xr-x  3 root      admin    96 Nov 20 11:18 GPG Keychain.app
+drwxr-xr-x@ 3 ibeekman  staff    96 May  1  2020 GanttProject.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 Git for Windows.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Oct 18  2018 GitHub Desktop.app
+drwxr-xr-x@ 3 ibeekman  admin    96 Nov 16  2018 Gmsh.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec  1 23:09 GoToMeeting.app
+drwxr-x---@ 3 ibeekman  staff    96 Feb 25  2019 Google Analytics Opt Out.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 Google Chrome — Boot Camp (Imported).app
+drwxrwxr-x@ 3 ibeekman  admin    96 Dec  2 00:01 Google Chrome.app
+drwxr-xr-x@ 3 ibeekman  staff    96 May 16  2018 Gqrx.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jun 26 21:55 ImageOptim.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 18:43 Import Virtual Machine.app
+drwxr-xr-x  3 root      wheel    96 Dec  8 12:24 Install macOS Big Sur.app
+drwxr-xr-x  3 ibeekman  admin    96 Dec 11 17:40 Intel® Software Manager.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 IrfanView 64-bit.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 Java(TM) Platform SE binary.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 Java(TM) Web Launcher.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Apr 23  2016 KextViewr.app
+drwxr-xr-x  3 ibeekman  staff    96 May 29  2020 Keybase.app
+drwxr-xr-x@ 3 root      wheel    96 Dec  2 15:58 Keynote.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov 22  2019 KnockKnock.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jun  7  2019 LaunchControl.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Mar 23  2020 LocalRadio.app
+drwxr-xr-x  3 root      admin    96 Jan 10  2020 LuLu.app
+drwxr-xr-x@ 3 root      wheel    96 Dec  4 13:54 LuckGrib.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 Markdown Monster.app
+drwxr-xr-x  3 root      wheel    96 Dec  1 19:08 Meshmixer.app
+drwxr-xr-x  3 ibeekman  admin    96 Dec 11 19:01 Microsoft Edge.app
+drwxrwxr-x  3 root      wheel    96 Nov 10 16:24 Microsoft Excel.app
+drwxrwxr-x  3 root      wheel    96 Nov 10 16:26 Microsoft PowerPoint.app
+drwxr-xr-x@ 3 root      wheel    96 Dec  2 15:56 Microsoft Remote Desktop.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 Microsoft Visual Studio 2015.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 Microsoft Visual Studio 2017.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 Microsoft Visual Studio Version Selector.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 18:43 Microsoft Visual Studio Web Protocol Handler Selector 2.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:47 Microsoft Visual Studio Web Protocol Handler Selector.app
+drwxrwxr-x  3 root      wheel    96 Nov 10 16:25 Microsoft Word.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jan 23  2020 Minecraft.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Apr 29  2020 Mountain Duck.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Dec  3 21:43 MultiMC.app
+drwxr-xr-x@ 3 ibeekman  admin    96 May 16  2019 MyBudget.app
+drwxr-xr-x@ 3 root      wheel    96 Nov 12 22:42 Numbers.app
+drwxrwxr-x@ 3 ibeekman  admin    96 Oct  7 13:41 ODAFileConverter.app
+drwxr-xr-x@ 3 root      wheel    96 Dec 11 11:30 Octotree.app
+drwxr-xr-x  3 root      wheel    96 Oct 13 19:26 OneDrive.app
+drwxr-xr-x  3 ibeekman  staff    96 Sep 25  2017 OverSight.app
+drwxr-xr-x@ 3 ibeekman  admin    96 Oct 19  2016 PINE64 Installer.app
+drwxr-xr-x@ 3 root      wheel    96 Nov 12 22:39 Pages.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Aug  4 22:56 ParaView-5.8.1.app
+drwxr-xr-x@ 3 root      wheel    96 Dec  4 13:54 PredictWind Offshore.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Mar 21  2020 PrusaSlicer.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Oct 14 11:29 PyCharm CE.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:50 Python 2.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:47 Python.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jul  5 18:29 Raspberry Pi Imager.app
+drwxr-xr-x  3 ibeekman  staff    96 Apr  7  2019 ReiKey.app
+drwxrwxr-x  8 root      admin   256 Jun 12  2020 SDRplayAPI.app
+drwxr-xr-x@ 3 root      wheel    96 Nov 13 11:25 Safari.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Apr  9  2020 SdrDx.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jul 13  2013 Serial Tools.app
+drwxr-xr-x  3 ibeekman  admin    96 Dec 11 17:40 Settings.app
+drwxr-xr-x  3 ibeekman  staff    96 Feb  4  2019 Skim.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:50 Skype — Boot Camp (Imported).app
+drwxr-xr-x  3 ibeekman  staff    96 Oct 29 21:19 Skype.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:50 Slack — Boot Camp (Imported).app
+drwxr-xr-x  3 ibeekman  staff    96 Nov 23 15:10 Slack.app
+drwxr-xr-x@ 3 ibeekman  staff    96 May  8  2018 Slic3r.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Oct  5 11:28 Spotify.app
+drwxr-xr-x@ 3 root      wheel    96 Nov  8 08:30 Stockfish.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 18:43 SvcTraceViewer.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Mar 19  2020 Synergy.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov 19  2018 TIDAL.app
+drwxr-xr-x@ 3 ibeekman  admin    96 Jul  2 04:55 Talon.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Mar  9  2019 TaskExplorer.app
+drwxrwxr-x@ 8 root      admin   256 Apr 15  2020 TeX
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 TfsProtocolHandler.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Oct  2 08:50 TripMode.app
+drwxr-xr-x  3 root      wheel    96 Dec  5  2019 Tunnelblick.app
+drwxr-xr-x  3 ibeekman  admin    96 Apr 17  2020 TurboTax Premier 2018.app
+drwxr-xr-x  3 ibeekman  admin    96 May 18  2020 TurboTax Premier 2019.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov 10 05:56 Ultimaker Cura.app
+drwxr-xr-x  5 root      wheel   160 Nov  8 09:35 Utilities
+drwxr-xr-x@ 3 ibeekman  staff    96 Jan  9  2019 VLC.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jan  8  2018 VMware Fusion-8.app
+drwxr-xr-x  3 root      wheel    96 Nov 17 08:43 VMware Fusion.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Aug 11 10:05 VNC Viewer.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:47 VeraCrypt — Boot Camp (Imported).app
+drwxr-xr-x  3 root      admin    96 Aug 21 15:42 VeraCrypt.app
+-rw-r--r--@ 1 ibeekman  admin  1648 Feb 20  2019 VideoCallZaak
+drwxr-xr-x  3 root      admin    96 Oct 20 14:21 VirtualBox.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 Visual Studio 2015 Graphics Analyzer.app
+drwxrwxr-x@ 4 root      admin   128 Jan 27  2019 WD Discovery
+drwxrwxrwx  3 ibeekman  staff    96 Jan 11  2019 WD Drive Utilities Uninstaller.app
+drwxr-xr-x  3 ibeekman  wheel    96 Jan 11  2019 WD Drive Utilities.app
+drwxrwxrwx@ 3 ibeekman  staff    96 Jun 20  2018 WD Security Uninstaller.app
+drwxr-xr-x@ 3 ibeekman  wheel    96 Jun 20  2018 WD Security.app
+drwxr-xr-x  3 ibeekman  staff    96 May  8  2018 WhatsYourSign.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 WinRAR archiver.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 WinSCP: SFTP, FTP, WebDAV, S3 and SCP client.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 Windows Defender User Interface.app
+drwxr-xr-x  3 root      wheel    96 Jun 12  2020 Wine Stable.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Jan 15  2020 Wireshark.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Apr 24  2017 Xamarin Studio.app
+drwxr-xr-x@ 3 root      wheel    96 Nov 12 17:49 Xcode.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 advixe-gui.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:47 amplxe-gui.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Aug 27 10:03 balenaEtcher.app
+drwxr-xr-x@ 3 ibeekman  staff    96 May 19  2019 eDEX-UI.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:01 iCloud Drive.app
+drwxr-xr-x  3 ibeekman  staff    96 Oct 30 17:18 iTerm.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 inspxe-gui.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov 12 23:06 kitty.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 19:02 kleopatra.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Sep 24 08:49 meshlab.app
+drwxr-xr-x@ 3 ibeekman  staff    96 Nov 22 12:46 mpv.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 18:43 system32.app
+drwxr-xr-x  3 ibeekman  staff    96 Dec 11 15:49 xlaunch.app
+drwxr-xr-x  3 ibeekman  wheel    96 Jun 12  2020 zoom.us.app
