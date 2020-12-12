@@ -10,7 +10,8 @@ fi
 # Turn off the damn wysiwyg slack editor
 export SLACK_DEVELOPER_MENU=true
 
-emacs --help > /dev/null 2>&1 && export EDITOR="emacs -nw" && export VISUAL=emacs
+# emacs --help > /dev/null 2>&1 && export EDITOR="emacs -nw" && export VISUAL=emacs
+export EDITOR="emacs -nw" && export VISUAL=emacs
 less --help > /dev/null 2>&1 && export PAGER=less
 
 if [ -d "${WORKDIR}" ]; then # DSRCs
@@ -28,12 +29,12 @@ export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
 if [ -d "/usr/local/bin" ]; then
   export PATH="/usr/local/bin:${PATH}"
 fi
-if [ -d /usr/local/opt/jenv ]; then
-  export JENV_ROOT=/usr/local/opt/jenv
-elif [ -d "${HOME}/.jenv/bin" ]; then
-  export PATH="${HOME}/.jenv/bin:${PATH}"
-fi
-jenv --help > /dev/null 2>&1 && eval "$(jenv init -)"
+# if [ -d /usr/local/opt/jenv ]; then
+#   export JENV_ROOT=/usr/local/opt/jenv
+# elif [ -d "${HOME}/.jenv/bin" ]; then
+#   export PATH="${HOME}/.jenv/bin:${PATH}"
+# fi
+# jenv --help > /dev/null 2>&1 && eval "$(jenv init -)"
 
 [ -d "/usr/local/sbin" ] && export PATH="/usr/local/sbin:${PATH}"
 [ -d "/usr/local/opt/go" ] && export GOROOT="/usr/local/opt/go"
@@ -106,29 +107,31 @@ export __TAUCMDR_PROGRESS_BARS__="disabled"
 [ -s "$HOME/.rvm/scripts/rvm" ] && . "$HOME/.rvm/scripts/rvm" || true # Load RVM into a shell session *as a function*
 
 
-if type keychain > /dev/null 2>&1 ; then
-    eval "$(keychain --agents "gpg,ssh" --eval)"
-    export GPG_AGENT_PID="$(pgrep gpg-agent)"
-    export SSH_AGENT_PID="$(pgrep ssh-agent)"
-else
-    if pid="$(pgrep gpg-agent)" ; then
-        export GPG_AGENT_PID="$pid"
-    else
-        gpgconf --launch gpg-agent
-        GPG_AGENT_PID="$(pgrep gpg-agent)"
-    fi
-fi
-export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+# if type keychain > /dev/null 2>&1 ; then
+#     eval "$(keychain --agents "gpg,ssh" --eval)"
+#     export GPG_AGENT_PID="$(pgrep gpg-agent)"
+#     export SSH_AGENT_PID="$(pgrep ssh-agent)"
+# else
+#     if pid="$(pgrep gpg-agent)" ; then
+#         export GPG_AGENT_PID="$pid"
+#     else
+#         gpgconf --launch gpg-agent
+#         GPG_AGENT_PID="$(pgrep gpg-agent)"
+#     fi
+# fi
+# export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+
+pgrep ssh-agent > /dev/null 2>&1 || eval "$(ssh-agent -s)"
 
 if [ "$(basename "${SHELL}")" = "bash" ]; then
   # shellcheck source=/Users/ibeekman/dotfiles/.bashrc
   [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
 fi
 
-# Source MOOSE profile
-if [ -f /opt/moose/environments/moose_profile ]; then
-    . /opt/moose/environments/moose_profile
-fi
+# # Source MOOSE profile
+# if [ -f /opt/moose/environments/moose_profile ]; then
+#     . /opt/moose/environments/moose_profile
+# fi
 
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 

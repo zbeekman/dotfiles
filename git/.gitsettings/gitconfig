@@ -83,7 +83,7 @@
 	conflictStyle = diff3
 
 [pull]
-	ff=yes
+	ff = only
 
 [mergetool "ediff"]
 	cmd = ~/.gitsettings/util/ediff.sh $LOCAL $REMOTE $MERGED $BASE
