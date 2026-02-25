@@ -143,7 +143,7 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
        gcc
        g++
     )
-    for major_version in {9,8,7,6,5}; do
+    for major_version in {13,12,11,10,9}; do
        echo "Looking for gcc-$major_version"
        for compiler in "${compilers[@]}"; do
          if ! type -P "${compiler}-${major_version}" >/dev/null 2>&1 ; then
@@ -168,7 +168,7 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
        gcc
        g++
     )
-    for major_version in {9,8,7,6,5}; do
+    for major_version in {13,12,11,10,9}; do
        echo "Looking for gcc-$major_version"
        for compiler in "${compilers[@]}"; do
          if ! type -P "${compiler}-${major_version}" >/dev/null 2>&1 ; then
@@ -316,7 +316,7 @@ fi
 
 # added by travis gem
 # shellcheck source=/Users/ibeekman/.travis/travis.sh
-source_if_present /Users/ibeekman/.travis/travis.sh
+# source_if_present /Users/ibeekman/.travis/travis.sh
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 add_path "$HOME/.rvm/bin" || true
@@ -440,3 +440,13 @@ fi
 # Wasmer
 export WASMER_DIR="/Users/ibeekman/.wasmer"
 [ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh" || true
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+# 1password completion
+if op --version > /dev/null ; then
+    source <(op completion bash)
+fi

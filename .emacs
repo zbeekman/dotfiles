@@ -213,7 +213,6 @@ There are two things you can do about this warning:
 	:config (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 	)
 (require 'helm)
-(require 'helm-config)
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
 
@@ -980,7 +979,7 @@ There are two things you can do about this warning:
 (add-hook 'prog-mode-hook
 	  '(lambda ()
 	     (column-number-mode t)
-	     (which-func-mode 1)
+             (which-function-mode 1)
 	     (flyspell-prog-mode)
 	     (electric-pair-mode)))
 
@@ -990,11 +989,9 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   (quote
-    (company-quickhelp zenburn-theme yaml-mode ws-butler wgrep-helm use-package-ensure-system-package treemacs-projectile treemacs-icons-dired travis sr-speedbar smartparens osx-trash osx-clipboard markdown-toc magit homebrew-mode highlight-parentheses helm-system-packages helm-rg helm-projectile helm-ls-git helm-descbinds helm-ag git-messenger flymake-cursor flycheck exec-path-from-shell elpy editorconfig edit-server doom-modeline dockerfile-mode docker cmake-font-lock beacon auto-package-update auctex ag)))
+   '(all-the-icons aas yafolding company-quickhelp zenburn-theme yaml-mode ws-butler wgrep-helm use-package-ensure-system-package treemacs-projectile treemacs-icons-dired travis sr-speedbar smartparens osx-trash osx-clipboard markdown-toc magit homebrew-mode highlight-parentheses helm-system-packages helm-rg helm-projectile helm-ls-git helm-descbinds helm-ag git-messenger flymake-cursor flycheck exec-path-from-shell elpy editorconfig edit-server doom-modeline dockerfile-mode docker cmake-font-lock beacon auto-package-update auctex ag))
  '(safe-local-variable-values
-   (quote
-    ((python-shell-interpreter . "~/taucmdr/conda/bin/python")
+   '((python-shell-interpreter . "~/taucmdr/conda/bin/python")
      (python-shell-interpreter-args . "-i")
      (nil)
      (setq python-shell-interpreter "/Users/ibeekman/taucmdr/conda/bin/python" python-shell-interpreter-args "-i" python-check-command "/Users/ibeekman/taucmdr/conda/bin/pylint")
@@ -1003,7 +1000,7 @@ There are two things you can do about this warning:
      (projectile-project-name . "ZstdFortranLib")
      (projectile-project-test-cmd . "pipenv run test")
      (projectile-project-compilation-cmd . "pipenv run build")
-     (projectile-project-configure-cmd . "pipenv run configure")))))
+     (projectile-project-configure-cmd . "pipenv run configure"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

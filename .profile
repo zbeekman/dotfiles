@@ -1,6 +1,8 @@
 #!/bin/sh
 # shellcheck shell=sh
 
+#set -o verbose
+
 export DOT_PROFILE_SOURCED="yes"
 
 if [ "$(uname)" = "Linux" ] ; then
@@ -11,7 +13,7 @@ fi
 export SLACK_DEVELOPER_MENU=true
 
 # emacs --help > /dev/null 2>&1 && export EDITOR="emacs -nw" && export VISUAL=emacs
-export EDITOR="emacs -nw" && export VISUAL=emacs
+#export EDITOR="emacs -nw" && export VISUAL=emacs
 less --help > /dev/null 2>&1 && export PAGER=less
 
 if [ -d "${WORKDIR}" ]; then # DSRCs
@@ -23,6 +25,9 @@ if [ -d "${HOME}/.local/bin" ]; then
 fi
 if [ -d "${HOME}/taucmdr/bin" ]; then
   export PATH="${HOME}/taucmdr/bin:${PATH}"
+fi
+if [ -d "${HOME}/fpm/bin" ]; then
+  export PATH="${HOME}/fpm/bin:${PATH}"
 fi
 export CTEST_OUTPUT_ON_FAILURE=1
 export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
@@ -36,17 +41,17 @@ fi
 # fi
 # jenv --help > /dev/null 2>&1 && eval "$(jenv init -)"
 
-[ -d "/usr/local/sbin" ] && export PATH="/usr/local/sbin:${PATH}"
-[ -d "/usr/local/opt/go" ] && export GOROOT="/usr/local/opt/go"
-if [ -z "${GOPATH}" ]; then
-    [ -d "${HOME}/go" ] && export GOPATH="${HOME}/go"
-else
-    [ -d "${HOME}/go" ] && export GOPATH="${HOME}/go:${GOPATH}"
-fi
+#[ -d "/usr/local/sbin" ] && export PATH="/usr/local/sbin:${PATH}"
+#[ -d "/usr/local/opt/go" ] && export GOROOT="/usr/local/opt/go"
+#if [ -z "${GOPATH}" ]; then
+#    [ -d "${HOME}/go" ] && export GOPATH="${HOME}/go"
+#else
+#    [ -d "${HOME}/go" ] && export GOPATH="${HOME}/go:${GOPATH}"
+#fi
 
-if [ -d "${GOPATH}/bin" ]; then
-    export PATH="${PATH}:${GOPATH}/bin"
-fi
+#if [ -d "${GOPATH}/bin" ]; then
+#    export PATH="${PATH}:${GOPATH}/bin"
+#fi
 
 export CLICOLOR=1
 export GREP_COLORS="fn=34:mt=01;34:ln=01;30:se=30"
@@ -143,3 +148,7 @@ export NVM_DIR="$HOME/.nvm"
 
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
+eval "$(gh copilot alias -- bash)"

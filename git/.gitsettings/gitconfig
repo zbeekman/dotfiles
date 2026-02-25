@@ -4,7 +4,7 @@
 	signingkey = A94489D938CB936668F90911A93CE70D8021BD0F
 	logallrefupdates = true
 [credential]
-	helper = osxkeychain
+	helper = store
 [core]
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
@@ -12,6 +12,11 @@
 	whitespace = trailing-space,space-before-tab,blank-at-eol,blank-at-eof
 	attributesfile = ~/.gitattributes_global
 	pager = less --tabs=4 -RFX
+[pager]
+	# Use `diffr` (make sure it is installed).
+	log = diffr | less --tabs=4 -RFX
+	show = diffr | less --tabs=4 -RFX
+	diff = diffr | less --tabs=4 -RFX
 # [color]
 # 	ui = always # This breaks git add --patch, no idea why
 [color "diff"]
@@ -140,6 +145,7 @@
 	required = true
 [init]
 	templatedir = ~/.gitsettings/gittemplates_global
+	defaultBranch = main
 
 [include]
 	path = ~/.secrets/github_auth
@@ -168,3 +174,8 @@
     insteadOf = "https://github.com/"
 [checkout]
 	defaultRemote = origin
+[safe]
+	directory = /gitroot/tau2
+
+[blame]
+	ignoreRevsFile = .git-blame-ignore-revs
