@@ -75,8 +75,6 @@ brew "grip"
 brew "hadolint"
 brew "htop"
 brew "hub"
-brew "icecream"
-brew "icemon"
 brew "imagemagick"
 brew "ipfs", link: false
 brew "ispell"

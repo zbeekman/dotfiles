@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+# shellcheck shell=bash
+#
+# Profile interactive bash shell startup time.
+# Requires PROFILE_STARTUP support in .bashrc (sets PS4 to $EPOCHREALTIME trace).
+#
+# Usage:
+#   profile-shell              # profile and show summary
+#   profile-shell -r           # raw trace (no summary, useful for piping)
+#   profile-shell -t 20        # show top 20 slow lines (default: 15)
+#   profile-shell -c           # category breakdown only (skip top-N listing)
+#   profile-shell -o out.log   # save trace log to a file
+#   profile-shell -l /path.log # parse an existing trace log instead of profiling
+
+set -euo pipefail
+
+TRACE_LOG=""
+OUTPUT_LOG=""
+TOP_N=15
+RAW=false
+CATEGORIES_ONLY=false
+
+usage() {
+    cat <<'EOF'
+Usage: profile-shell [OPTIONS]
+
+Profile interactive bash startup time using $EPOCHREALTIME tracing.
+
+Options:
+  -t N       Show top N slowest lines (default: 15)
+  -c         Show only category summary, skip per-line listing
+  -r         Dump raw trace log to stdout (no parsing)
+  -o FILE    Save trace log to FILE (preserved after exit)
+  -l FILE    Parse an existing trace log instead of running a new profile
+  -h         Show this help
+EOF
+    exit 0
+}
+
+while getopts "t:l:o:rch" opt; do
+    case "$opt" in
+        t) TOP_N="$OPTARG" ;;
+        l) TRACE_LOG="$OPTARG" ;;
+        o) OUTPUT_LOG="$OPTARG" ;;
+        r) RAW=true ;;
+        c) CATEGORIES_ONLY=true ;;
+        h) usage ;;
+        *) usage ;;
+    esac
+done
+
+# --- Collect trace -----------------------------------------------------------
+
+if [[ -z "$TRACE_LOG" ]]; then
+    if [[ -n "$OUTPUT_LOG" ]]; then
+        TRACE_LOG="$OUTPUT_LOG"
+    else
+        TRACE_LOG=$(mktemp /tmp/bashrc_profile.XXXXXX.log)
+        trap 'rm -f "$TRACE_LOG"' EXIT
+    fi
+
+    echo "Profiling interactive bash startup..."
+    PROFILE_STARTUP=true bash -i -c exit 2>"$TRACE_LOG"
+
+    if [[ -n "$OUTPUT_LOG" ]]; then
+        echo "Trace log saved to: $OUTPUT_LOG"
+    fi
+    echo ""
+fi
+
+if [[ ! -s "$TRACE_LOG" ]]; then
+    echo "Error: trace log is empty or missing: $TRACE_LOG" >&2
+    exit 1
+fi
+
+if [[ "$RAW" == true ]]; then
+    cat "$TRACE_LOG"
+    exit 0
+fi
+
+# --- Parse trace --------------------------------------------------------------
+# Trace format (tab-separated):
+#   + <timestamp>\t<file>:<line>\t<command>
+# Older traces without file:line (single tab) are also supported.
+
+awk -F'\t' -v top_n="$TOP_N" '
+BEGIN {
+    n_slow = 0
+}
+
+/^\++ [0-9]+\.[0-9]+/ {
+    # Field 1: "+ timestamp" (with possible nested + prefixes)
+    match($1, /[0-9]+\.[0-9]+/)
+    ts = substr($1, RSTART, RLENGTH) + 0
+
+    # Detect format: 3 fields = new (file:line + cmd), 2 fields = old (cmd only)
+    if (NF >= 3) {
+        loc = $2
+        cmd = $3
+    } else {
+        loc = ""
+        cmd = ($2 != "") ? $2 : "(empty)"
+    }
+
+    if (first == 0) first = ts
+    last = ts
+
+    if (prev > 0) {
+        delta = ts - prev
+
+        # ---- categorize (by command text) ----
+        pl = prev_cmd
+        if      (pl ~ /bash_completion/)                    cat_comp += delta
+        else if (pl ~ /liquidprompt|[^a-z]LP_|[^a-z]lp_/)  cat_lp += delta
+        else if (pl ~ /modulecmd|modules\/init/)            cat_mod += delta
+        else if (pl ~ /[^a-z]op[^a-z]/ && pl ~ /version|completion/) cat_op += delta
+        else if (pl ~ /fzf/)                                cat_fzf += delta
+        else if (pl ~ /nvm|NVM/)                            cat_nvm += delta
+        else if (pl ~ /brew|command-not-found/)             cat_brew += delta
+        else                                                cat_other += delta
+
+        # ---- collect slow lines ----
+        if (delta > 0.003) {
+            slow_time[n_slow] = delta
+            slow_loc[n_slow] = prev_loc
+            slow_cmd[n_slow] = prev_cmd
+            n_slow++
+        }
+    }
+    prev = ts
+    prev_loc = loc
+    prev_cmd = cmd
+}
+
+END {
+    total = last - first
+    trace_lines = NR
+
+    printf "═══════════════════════════════════════════════════════════════════\n"
+    printf "  Shell Startup Profile\n"
+    printf "═══════════════════════════════════════════════════════════════════\n"
+    printf "\n"
+    printf "  Total time:    %8.3f s\n", total
+    printf "  Trace lines:   %8d\n", trace_lines
+    printf "\n"
+    printf "───────────────────────────────────────────────────────────────────\n"
+    printf "  Category Breakdown\n"
+    printf "───────────────────────────────────────────────────────────────────\n"
+    printf "\n"
+
+    # Sort categories by time (manual since awk has no sort)
+    n_cat = 0
+    cat_names[n_cat] = "bash_completion"; cat_times[n_cat++] = cat_comp
+    cat_names[n_cat] = "liquidprompt";    cat_times[n_cat++] = cat_lp
+    cat_names[n_cat] = "modules init";    cat_times[n_cat++] = cat_mod
+    cat_names[n_cat] = "1password (op)";  cat_times[n_cat++] = cat_op
+    cat_names[n_cat] = "fzf";            cat_times[n_cat++] = cat_fzf
+    cat_names[n_cat] = "nvm";            cat_times[n_cat++] = cat_nvm
+    cat_names[n_cat] = "brew cmd-not-found"; cat_times[n_cat++] = cat_brew
+    cat_names[n_cat] = "other";          cat_times[n_cat++] = cat_other
+
+    # Insertion sort descending
+    for (i = 1; i < n_cat; i++) {
+        j = i
+        while (j > 0 && cat_times[j] > cat_times[j-1]) {
+            tmp = cat_times[j]; cat_times[j] = cat_times[j-1]; cat_times[j-1] = tmp
+            tmp = cat_names[j]; cat_names[j] = cat_names[j-1]; cat_names[j-1] = tmp
+            j--
+        }
+    }
+
+    bar_max = 30
+    max_time = cat_times[0]
+    for (i = 0; i < n_cat; i++) {
+        t = cat_times[i]
+        if (t < 0.001) continue
+        pct = (total > 0) ? (t / total * 100) : 0
+        bar_len = (max_time > 0) ? int(t / max_time * bar_max + 0.5) : 0
+        if (bar_len < 1 && t > 0) bar_len = 1
+        bar = ""
+        for (b = 0; b < bar_len; b++) bar = bar "█"
+        printf "  %-20s %7.3fs  %5.1f%%  %s\n", cat_names[i], t, pct, bar
+    }
+    printf "\n"
+
+    if (categories_only == "true") exit 0
+
+    # ---- Top-N slow lines ----
+    # Insertion sort descending
+    for (i = 1; i < n_slow; i++) {
+        j = i
+        while (j > 0 && slow_time[j] > slow_time[j-1]) {
+            tmp = slow_time[j]; slow_time[j] = slow_time[j-1]; slow_time[j-1] = tmp
+            tmp = slow_loc[j]; slow_loc[j] = slow_loc[j-1]; slow_loc[j-1] = tmp
+            tmp = slow_cmd[j]; slow_cmd[j] = slow_cmd[j-1]; slow_cmd[j-1] = tmp
+            j--
+        }
+    }
+
+    show = (n_slow < top_n) ? n_slow : top_n
+    if (show > 0) {
+        printf "───────────────────────────────────────────────────────────────────\n"
+        printf "  Top %d Slowest Operations\n", show
+        printf "───────────────────────────────────────────────────────────────────\n"
+        printf "\n"
+        for (i = 0; i < show; i++) {
+            c = slow_cmd[i]
+            if (length(c) > 50) c = substr(c, 1, 47) "..."
+
+            if (slow_loc[i] != "") {
+                # Shorten home dir prefix in file paths
+                loc = slow_loc[i]
+                home = ENVIRON["HOME"]
+                if (home != "" && index(loc, home) == 1)
+                    loc = "~" substr(loc, length(home) + 1)
+                printf "  %7.3fs  %-35s %s\n", slow_time[i], loc, c
+            } else {
+                printf "  %7.3fs  %s\n", slow_time[i], c
+            }
+        }
+        printf "\n"
+    }
+
+    printf "═══════════════════════════════════════════════════════════════════\n"
+}
+' categories_only="$CATEGORIES_ONLY" "$TRACE_LOG"

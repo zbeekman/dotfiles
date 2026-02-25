@@ -1,8 +1,26 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
+#
+# Sourcing order: .profile → .bashrc (this file) → .bashrc.personal → .bash_aliases
+#
+# Sourced by: .profile (login shells), or directly by non-login interactive shells
+# Sources:    .bashrc.personal, .bash_aliases, liquidprompt, bash_completion,
+#             nvm, fzf, 1password completion, modules init
 
 # to profile and/or debug, set DEBUG=true
 DEBUG=false
+
+# Set PROFILE_STARTUP=true to get per-line timing via $EPOCHREALTIME trace
+# Usage: profile-shell (see bin/profile-shell)
+PROFILE_STARTUP=${PROFILE_STARTUP:-false}
+if [[ "${PROFILE_STARTUP}" == true ]]; then
+    PS4='+ $EPOCHREALTIME\011${BASH_SOURCE[0]}:${LINENO}\011'
+    set -x
+fi
+
+# Set VERBOSE=true to see diagnostic output during shell init
+VERBOSE=${VERBOSE:-false}
+_verbose() { [[ "$VERBOSE" == true ]] && echo "$@" || true; }
 
 if [[ "${DEBUG}" == true ]]; then
     # This timing trace requires the `moreutils` package, e.g. `brew install moreutils`
@@ -16,10 +34,8 @@ if [[ "${DEBUG}" == true ]]; then
     set -x
     set -o verbose
     set -o errexit
+    set -o errtrace
 fi
-
-# Debug completion with:
-set -o errtrace
 
 prepend_path () {
     # Add $1 to front of PATH or variable specified by $2
@@ -32,7 +48,7 @@ prepend_path () {
 	return 1
     fi
     eval "${VAR}=\"${1}:${!VAR}\""
-    export ${VAR?}
+    export "${VAR?}"
     echo "${!VAR}"
 }
 
@@ -48,9 +64,9 @@ add_path () {
 	return 1
     fi
 
-    if ! grep "$1" <<< $VAR > /dev/null 2>&1 ; then
+    if ! grep "$1" <<< "${!VAR}" > /dev/null 2>&1 ; then
 	eval "${VAR}=\"${!VAR}:${1}\""
-	export ${VAR?}
+	export "${VAR?}"
 	echo "${!VAR}"
     fi
 }
@@ -75,7 +91,7 @@ dedupe_path () {
     done
     IFS="$OLD_IFS"
     eval "${VAR}=\"${n:0: -1}\""
-    export ${VAR?}
+    export "${VAR?}"
     echo "${!VAR}"
 }
 
@@ -93,22 +109,6 @@ brew_show_outdated() {
     else
 	true
     fi
-}
-
-free_mosh () {
-    for _d in "$(brew --cellar mosh)"/*/ ; do
-	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add "${_d}bin/mosh-server"
-	sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${_d}bin/mosh-server"
-    done
-}
-
-free_icecream () {
-    for _d in "$(brew --cellar icecream)"/*/ ; do
-	for daemon in iceccd icecc-scheduler ; do
-	    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add "${_d}sbin/${daemon}"
-	    sudo /usr/libexec/ApplicationFirewall/socketfilterfw --unblockapp "${_d}sbin/${daemon}"
-	done
-    done
 }
 
 # mkcd: mkdir and cd into it
@@ -129,7 +129,7 @@ extract() {
             *.zip)       unzip "$1"       ;;
             *.Z)         uncompress "$1"  ;;
             *.7z)        7z x "$1"        ;;
-            *)           echo "I don't know how to extract \\'$1\\'..." ;;
+            *)           printf "I don't know how to extract '%s'...\\n" "$1" ;;
         esac
     else
         echo "'$1' is not a valid file!"
@@ -144,53 +144,25 @@ if [[ $OSTYPE == [Dd]arwin* ]]; then
        g++
     )
     for major_version in {13,12,11,10,9}; do
-       echo "Looking for gcc-$major_version"
+       _verbose "Looking for gcc-$major_version"
        for compiler in "${compilers[@]}"; do
          if ! type -P "${compiler}-${major_version}" >/dev/null 2>&1 ; then
-           echo "Not found" # try next lower maj version
+           _verbose "Not found" # try next lower maj version
            continue 2
          fi
        done
        # have all 3 compilers
-       FC="$(type -P gfortran-${major_version})"
-       CC="$(type -P gcc-${major_version})"
-       CXX="$(type -P g++-${major_version})"
+       FC="$(type -P "gfortran-${major_version}")"
+       CC="$(type -P "gcc-${major_version}")"
+       CXX="$(type -P "g++-${major_version}")"
        export FC
        export CC
        export CXX
-       echo "FC=$FC CC=$CC CXX=$CXX"
+       _verbose "FC=$FC CC=$CC CXX=$CXX"
        break
     done
   }
 
-  icecream_pick_compiler () {
-    compilers=(
-       gcc
-       g++
-    )
-    for major_version in {13,12,11,10,9}; do
-       echo "Looking for gcc-$major_version"
-       for compiler in "${compilers[@]}"; do
-         if ! type -P "${compiler}-${major_version}" >/dev/null 2>&1 ; then
-           echo "Not found" # try next lower maj version
-           continue 2
-         fi
-       done
-       # have both compilers
-       ICECC_CC="$(type -P gcc-${major_version})"
-       ICECC_CXX="$(type -P g++-${major_version})"
-       export ICECC_CC
-       export ICECXX_CXX
-       echo "ICECC_CC =$ICECC_CC"
-       echo "ICECC_CXX=$ICECC_CXX"
-       break
-    done
-  }
-
-  if icecc --version &>/dev/null ; then
-      icecream_pick_compiler
-  fi
-  export ICECC_CLANG_REMOTE_CPP=0
 fi
 
 # Define a command to start an ssh SOCKS tunnel for proxying web traffic
@@ -283,43 +255,6 @@ fi
 #     return
 # fi
 
-# Fix TMPDIR to point to a suitable location
-if [ -z "${TMPDIR}" ] ; then
-    if [ -d "${WORKDIR}" ] ; then
-	export TMPDIR="${WORKDIR}/tmp"
-    elif [ -d "/tmp" ] ; then
-	export TMPDIR=/tmp
-    fi
-elif [[ ! "${TMPDIR%/}" =~ "/tmp$" ]] ; then
-    mkdir -p "${TMPDIR%/}/tmp" && \
-	export TMPDIR="${TMPDIR%/}/tmp"
-fi
-
-
-if type -a module > /dev/null 2>&1 ; then
-    if [ -d "${PET_HOME}/modules" ] ; then
-	module use --append "${PET_HOME}/modules"
-    fi
-    # [ -d "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx" ] && module use --append "${HOME}/apps/us3d/develop-current-knl-ic17/intel.onyx"
-fi
-
-if [[ "$(hostname)" = [Oo]nyx* || "$(hostname)" = batch* ]]; then
-  export LP_MARK_GIT="\\[-+\\]"
-  module swap PrgEnv-cray PrgEnv-intel 2>/dev/null || true
-  module load cray-shmem 2>/dev/null|| true
-fi
-
-# Homebrew command not found
-if brew command command-not-found-init >/dev/null 2>&1; then
-  eval "$(brew command-not-found-init)"
-fi
-
-# added by travis gem
-# shellcheck source=/Users/ibeekman/.travis/travis.sh
-# source_if_present /Users/ibeekman/.travis/travis.sh
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-add_path "$HOME/.rvm/bin" || true
 
 source_if_present ~/.bashrc.personal
 source_if_present ~/.bash_aliases
@@ -338,18 +273,11 @@ if [[ $- == *i* ]] ; then
     shopt -s histappend
     shopt -u histreedit
 
-    #export LP_PS1_PREFIX='\[\e]0;\h:\W\a\]'
-
-    # Use iTerm shell integration
-    # if [[ "${OSTYPE}" == [Dd]arwin* ]]; then
-    #   if [[ -f "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")" && "${TERM}" =~ "xterm" ]]; then
-    #     # shellcheck source=/Users/ibeekman/.iterm2_shell_integration.bash
-    #     source "${HOME}/.iterm2_shell_integration.$(basename "${SHELL}")"
-    #     LP_PS1_PREFIX="${LP_PS1_PREFIX}\\[$(iterm2_prompt_mark)\\]"
-    #     export LP_PS1_PREFIX
-    #   fi
-    # fi
-
+    # Homebrew command not found (source handler directly, avoid slow `brew` invocation)
+    if [ -n "${HOMEBREW_REPOSITORY:-}" ] && [ -f "${HOMEBREW_REPOSITORY}/Library/Homebrew/command-not-found/handler.sh" ]; then
+	# shellcheck disable=SC1091
+	. "${HOMEBREW_REPOSITORY}/Library/Homebrew/command-not-found/handler.sh"
+    fi
 
     # Use Bash completion, if installed
     # shellcheck disable=SC1091
@@ -366,10 +294,10 @@ if [[ $- == *i* ]] ; then
     if [[ ! "${PROMPT_COMMAND:-}" = *lp_set_prompt ]] ; then
 	# liquid prompt not yet enabled
 	if [[ -f "${HOME}/dotfiles/liquidprompt/liquidprompt" ]] ; then
-	    # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
+	    # shellcheck source=liquidprompt/liquidprompt
 	    source "${HOME}/dotfiles/liquidprompt/liquidprompt"
 	else
-	    # shellcheck source=/Users/ibeekman/dotfiles/liquidprompt/liquidprompt
+	    # shellcheck disable=SC1091
 	    source_if_present "/usr/local/share/liquidprompt"
 	fi
     fi
@@ -393,16 +321,12 @@ if [[ $- == *i* ]] ; then
 	done
     fi
 
-    # Set OVPN store
-    #export OVPN_DATA=ovpn-data-PT-EAST
-
     # Print message telling user about outdated packages on macOS
     brew_show_outdated Formulae /tmp/brew.outdated || true
     brew_show_outdated Casks /tmp/cask.outdated || true
     brew_show_outdated Apps /tmp/mas.outdated || true
 
-    export HOMEBREW_MIANTAINER=1
-    export HOMEBREW_BINTRAY_USER=zbeekman
+    export HOMEBREW_MAINTAINER=1
     export HOMEBREW_DISPLAY_INSTALL_TIMES=1
     export HOMEBREW_NO_INSECURE_REDIRECT=1
     export HOMEBREW_CURL_RETRIES=4
@@ -411,42 +335,78 @@ if [[ $- == *i* ]] ; then
 
     export BAT_THEME=zenburn
 
-    # shellcheck source=/Users/ibeekman/.fzf.bash
+    # Modules — lazy-load to avoid ~85ms Tcl interpreter startup
+    if [ -f /usr/local/opt/modules/init/bash ]; then
+	# shellcheck disable=SC1091
+	module() { unset -f module; . /usr/local/opt/modules/init/bash; module "$@"; }
+    fi
+
+    if command -v dircolors > /dev/null 2>&1; then
+	DIR_COLOR_PROG=dircolors
+    elif command -v gdircolors > /dev/null 2>&1; then
+	DIR_COLOR_PROG=gdircolors
+    fi
+    if [ -n "${DIR_COLOR_PROG:-}" ] && [ -r "$HOME/.dir_colors" ] ; then
+	eval "$("${DIR_COLOR_PROG}" "$HOME/.dir_colors")"
+    fi
+
+    # NVM — lazy-load to avoid ~0.5s startup cost
+    export NVM_DIR="$HOME/.nvm"
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+	_nvm_lazy_load() {
+	    unset -f nvm node npm npx
+	    # shellcheck disable=SC1091
+	    \. "$NVM_DIR/nvm.sh"
+	    # shellcheck disable=SC1091
+	    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+	}
+	nvm()  { _nvm_lazy_load; nvm  "$@"; }
+	node() { _nvm_lazy_load; node "$@"; }
+	npm()  { _nvm_lazy_load; npm  "$@"; }
+	npx()  { _nvm_lazy_load; npx  "$@"; }
+    fi
+
+    # 1password completion — cached for speed, refreshed on first `op` use
+    if command -v op > /dev/null 2>&1 ; then
+	_op_cache="${HOME}/.cache/op/completion.bash"
+	if [ -f "$_op_cache" ]; then
+	    # shellcheck disable=SC1090
+	    . "$_op_cache"
+	else
+	    mkdir -p "${HOME}/.cache/op"
+	    chmod 700 "${HOME}/.cache/op"
+	    op completion bash > "$_op_cache"
+	    chmod 600 "$_op_cache"
+	    # shellcheck disable=SC1090
+	    . "$_op_cache"
+	fi
+	op() {
+	    unset -f op
+	    command op "$@"
+	    local _ret=$?
+	    # Refresh cache in background for next shell
+	    op completion bash > "${HOME}/.cache/op/completion.bash" 2>/dev/null &
+	    disown
+	    return $_ret
+	}
+	unset _op_cache
+    fi
+
+    # shellcheck disable=SC1091
     source_if_present ~/.fzf.bash
 fi
 
 PATH="$(dedupe_path PATH)"
 export PATH
 
-# If debugging was turned on, turn off everything here:
+# Turn off profiling/debugging if enabled
+if [[ "${PROFILE_STARTUP}" == true ]]; then
+    set +x
+    PS4='+ '
+fi
 if [[ "${DEBUG}" == true ]]; then
     unset  BASH_XTRACEFD
     set +x
     set +o verbose
     set +o errexit
-fi
-
-source_if_present /usr/local/opt/modules/init/bash
-
-if command -v dircolors > /dev/null 2>&1; then
-    export DIR_COLOR_PROG=dir_colors
-elif command -v gdircolors > /dev/null 2>&1; then
-    export DIR_COLOR_PROG=gdir_colors
-fi
-if [ -r "~/.dir_colors" ] ; then
-    eval $(${DIR_COLOR_PROG} ~/.dir_colors)
-fi
-
-# Wasmer
-export WASMER_DIR="/Users/ibeekman/.wasmer"
-[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh" || true
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
-# 1password completion
-if op --version > /dev/null ; then
-    source <(op completion bash)
 fi
