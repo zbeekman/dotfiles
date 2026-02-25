@@ -9,6 +9,7 @@
 #   profile-shell -r           # raw trace (no summary, useful for piping)
 #   profile-shell -t 20        # show top 20 slow lines (default: 15)
 #   profile-shell -c           # category breakdown only (skip top-N listing)
+#   profile-shell -f           # per-file breakdown
 #   profile-shell -o out.log   # save trace log to a file
 #   profile-shell -l /path.log # parse an existing trace log instead of profiling
 
@@ -19,6 +20,7 @@ OUTPUT_LOG=""
 TOP_N=15
 RAW=false
 CATEGORIES_ONLY=false
+FILE_VIEW=false
 
 usage() {
     cat <<'EOF'
@@ -28,7 +30,8 @@ Profile interactive bash startup time using $EPOCHREALTIME tracing.
 
 Options:
   -t N       Show top N slowest lines (default: 15)
-  -c         Show only category summary, skip per-line listing
+  -c         Show only category summary, skip per-line and per-file listings
+  -f         Show per-file time breakdown
   -r         Dump raw trace log to stdout (no parsing)
   -o FILE    Save trace log to FILE (preserved after exit)
   -l FILE    Parse an existing trace log instead of running a new profile
@@ -37,13 +40,14 @@ EOF
     exit 0
 }
 
-while getopts "t:l:o:rch" opt; do
+while getopts "t:l:o:rcfh" opt; do
     case "$opt" in
         t) TOP_N="$OPTARG" ;;
         l) TRACE_LOG="$OPTARG" ;;
         o) OUTPUT_LOG="$OPTARG" ;;
         r) RAW=true ;;
         c) CATEGORIES_ONLY=true ;;
+        f) FILE_VIEW=true ;;
         h) usage ;;
         *) usage ;;
     esac
@@ -86,6 +90,15 @@ fi
 awk -F'\t' -v top_n="$TOP_N" '
 BEGIN {
     n_slow = 0
+    n_files = 0
+}
+
+# Shorten home dir prefix
+function shorten(path,    h) {
+    h = ENVIRON["HOME"]
+    if (h != "" && index(path, h) == 1)
+        return "~" substr(path, length(h) + 1)
+    return path
 }
 
 /^\++ [0-9]+\.[0-9]+/ {
@@ -99,8 +112,9 @@ BEGIN {
         cmd = $3
     } else {
         loc = ""
-        cmd = ($2 != "") ? $2 : "(empty)"
+        cmd = $2
     }
+    if (cmd == "") cmd = "(empty)"
 
     if (first == 0) first = ts
     last = ts
@@ -108,16 +122,27 @@ BEGIN {
     if (prev > 0) {
         delta = ts - prev
 
-        # ---- categorize (by command text) ----
-        pl = prev_cmd
-        if      (pl ~ /bash_completion/)                    cat_comp += delta
-        else if (pl ~ /liquidprompt|[^a-z]LP_|[^a-z]lp_/)  cat_lp += delta
-        else if (pl ~ /modulecmd|modules\/init/)            cat_mod += delta
-        else if (pl ~ /[^a-z]op[^a-z]/ && pl ~ /version|completion/) cat_op += delta
-        else if (pl ~ /fzf/)                                cat_fzf += delta
-        else if (pl ~ /nvm|NVM/)                            cat_nvm += delta
-        else if (pl ~ /brew|command-not-found/)             cat_brew += delta
-        else                                                cat_other += delta
+        # ---- categorize ----
+        # Prefer source file path (field 2) for accuracy; fall back to command text
+        pl = prev_loc
+        pc = prev_cmd
+        categorized = 0
+
+        if (pl ~ /bash_completion/) cat_comp += delta
+        else if (pl ~ /liquidprompt/) cat_lp += delta
+        else if (pl ~ /fzf/ || pc ~ /fzf/) cat_fzf += delta
+        else cat_other += delta
+
+        # ---- per-file aggregation ----
+        # Extract file from prev_loc (strip :lineno)
+        if (prev_loc != "") {
+            split(prev_loc, _parts, ":")
+            f = _parts[1]
+            if (!(f in file_time_map)) {
+                file_order[n_files++] = f
+            }
+            file_time_map[f] += delta
+        }
 
         # ---- collect slow lines ----
         if (delta > 0.003) {
@@ -148,15 +173,11 @@ END {
     printf "───────────────────────────────────────────────────────────────────\n"
     printf "\n"
 
-    # Sort categories by time (manual since awk has no sort)
+    # Sort categories by time
     n_cat = 0
     cat_names[n_cat] = "bash_completion"; cat_times[n_cat++] = cat_comp
     cat_names[n_cat] = "liquidprompt";    cat_times[n_cat++] = cat_lp
-    cat_names[n_cat] = "modules init";    cat_times[n_cat++] = cat_mod
-    cat_names[n_cat] = "1password (op)";  cat_times[n_cat++] = cat_op
     cat_names[n_cat] = "fzf";            cat_times[n_cat++] = cat_fzf
-    cat_names[n_cat] = "nvm";            cat_times[n_cat++] = cat_nvm
-    cat_names[n_cat] = "brew cmd-not-found"; cat_times[n_cat++] = cat_brew
     cat_names[n_cat] = "other";          cat_times[n_cat++] = cat_other
 
     # Insertion sort descending
@@ -178,12 +199,40 @@ END {
         bar_len = (max_time > 0) ? int(t / max_time * bar_max + 0.5) : 0
         if (bar_len < 1 && t > 0) bar_len = 1
         bar = ""
-        for (b = 0; b < bar_len; b++) bar = bar "█"
+        for (b = 0; b < bar_len; b++) bar = bar "\342\226\210"
         printf "  %-20s %7.3fs  %5.1f%%  %s\n", cat_names[i], t, pct, bar
     }
     printf "\n"
 
     if (categories_only == "true") exit 0
+
+    # ---- Per-file breakdown ----
+    if (file_view == "true" && n_files > 0) {
+        # Sort files by time (insertion sort descending)
+        for (i = 1; i < n_files; i++) {
+            j = i
+            while (j > 0 && file_time_map[file_order[j]] > file_time_map[file_order[j-1]]) {
+                tmp = file_order[j]
+                file_order[j] = file_order[j-1]
+                file_order[j-1] = tmp
+                j--
+            }
+        }
+
+        printf "───────────────────────────────────────────────────────────────────\n"
+        printf "  Per-File Breakdown\n"
+        printf "───────────────────────────────────────────────────────────────────\n"
+        printf "\n"
+
+        for (i = 0; i < n_files; i++) {
+            f = file_order[i]
+            t = file_time_map[f]
+            if (t < 0.001) continue
+            pct = (total > 0) ? (t / total * 100) : 0
+            printf "  %7.3fs  %5.1f%%  %s\n", t, pct, shorten(f)
+        }
+        printf "\n"
+    }
 
     # ---- Top-N slow lines ----
     # Insertion sort descending
@@ -208,12 +257,7 @@ END {
             if (length(c) > 50) c = substr(c, 1, 47) "..."
 
             if (slow_loc[i] != "") {
-                # Shorten home dir prefix in file paths
-                loc = slow_loc[i]
-                home = ENVIRON["HOME"]
-                if (home != "" && index(loc, home) == 1)
-                    loc = "~" substr(loc, length(home) + 1)
-                printf "  %7.3fs  %-35s %s\n", slow_time[i], loc, c
+                printf "  %7.3fs  %-35s %s\n", slow_time[i], shorten(slow_loc[i]), c
             } else {
                 printf "  %7.3fs  %s\n", slow_time[i], c
             }
@@ -223,4 +267,4 @@ END {
 
     printf "═══════════════════════════════════════════════════════════════════\n"
 }
-' categories_only="$CATEGORIES_ONLY" "$TRACE_LOG"
+' categories_only="$CATEGORIES_ONLY" file_view="$FILE_VIEW" "$TRACE_LOG"
