@@ -273,6 +273,10 @@ if [[ $- == *i* ]] ; then
     shopt -s histappend
     shopt -u histreedit
 
+    # Sync history across all tabs/sessions: flush to disk after every command,
+    # then reload so Ctrl-R sees commands from other tabs in real time.
+    PROMPT_COMMAND="history -a; history -c; history -r${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
     # Homebrew command not found (source handler directly, avoid slow `brew` invocation)
     if [ -n "${HOMEBREW_REPOSITORY:-}" ] && [ -f "${HOMEBREW_REPOSITORY}/Library/Homebrew/command-not-found/handler.sh" ]; then
 	# shellcheck disable=SC1091
@@ -302,16 +306,6 @@ if [[ $- == *i* ]] ; then
 	fi
     fi
     # trap err_report ERR
-
-    # export GPG_TTY=$(tty)
-    # export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-
-    # If an agent is running...which it should be
-#    if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1 || ps -p "$GPG_AGENT_PID" > /dev/null 2>&1 ; then
-    if ps -p "$SSH_AGENT_PID" > /dev/null 2>&1 > /dev/null 2>&1 ; then	
-	# and if we haven't added the default keys...
-	ssh-add -l &> /dev/null || ssh-add || echo "Could not add keys to ssh-agent."
-    fi
 
     # Get tokens if they exist
     if [[ -d "${HOME}/.secrets/tokens" ]]; then

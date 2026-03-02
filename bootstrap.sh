@@ -56,6 +56,8 @@ else
   echo "Not changing host name"
 fi
 
+mkdir -p ~/.ssh/tmp && chmod 700 ~/.ssh/tmp
+
 if [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
   echo "Please enter your email: "
   read -r email
@@ -66,9 +68,8 @@ fi
 pbcopy <"$HOME/.ssh/id_rsa.pub"
 read -r -p "Your public ssh key is in your pasteboard. Add it to github.com if it's not already there and hit Return"
 
-echo "Starting ssh-agent and adding key"
-eval "$(ssh-agent -s)"
-ssh-add -K "$HOME/.ssh/id_rsa"
+echo "Adding key to macOS keychain"
+ssh-add --apple-use-keychain "$HOME/.ssh/id_rsa"
 
 if ! command -v brew >/dev/null; then
   echo "Installing homebrew"

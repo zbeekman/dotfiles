@@ -87,7 +87,31 @@ case "$-" in *i*) ;; *) return 0 2>/dev/null || exit 0;; esac
 # fi
 # export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 
-pgrep ssh-agent > /dev/null 2>&1 || eval "$(ssh-agent -s)" > /dev/null
+# --- ssh-agent: single persistent instance ---
+# macOS launchd provides ssh-agent and sets SSH_AUTH_SOCK automatically.
+# On Linux (or if launchd agent is absent), manage our own agent via env file.
+_ssh_agent_env="$HOME/.ssh/agent-env"
+
+_start_ssh_agent() {
+    eval "$(ssh-agent -s)" > /dev/null
+    printf 'SSH_AUTH_SOCK=%s; export SSH_AUTH_SOCK;\n' "$SSH_AUTH_SOCK" > "$_ssh_agent_env"
+    printf 'SSH_AGENT_PID=%s; export SSH_AGENT_PID;\n' "$SSH_AGENT_PID" >> "$_ssh_agent_env"
+    chmod 600 "$_ssh_agent_env"
+}
+
+if [ -n "$SSH_AUTH_SOCK" ] && [ -S "$SSH_AUTH_SOCK" ]; then
+    # launchd (macOS) or parent process already set a valid agent socket — use it
+    :
+elif [ -f "$_ssh_agent_env" ]; then
+    # shellcheck disable=SC1090
+    . "$_ssh_agent_env" > /dev/null
+    # Verify agent is still alive
+    kill -0 "$SSH_AGENT_PID" 2>/dev/null || _start_ssh_agent
+else
+    _start_ssh_agent
+fi
+
+unset _ssh_agent_env
 
 if [ "${SHELL##*/}" = "bash" ]; then
   # shellcheck source=.bashrc
