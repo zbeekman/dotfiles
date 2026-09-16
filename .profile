@@ -4,9 +4,17 @@
 # Sourcing order: .profile (this file) → .bashrc (if bash) → .bashrc.personal → .bash_aliases
 #
 # Sourced by: login shells (Terminal.app, SSH login, etc.)
+#             .bash_profile and .zprofile are thin delegators that source this file.
 # Sources:    .bashrc (for bash), autojump, iterm2 shell integration
+#
+# Installer sentinels: Docker Desktop (and similar tools) probe .bash_profile,
+# .zprofile and .profile for their marker comment and inject a PATH block when
+# it is missing. Keep the marker lines verbatim so they leave these files alone.
 
 #set -o verbose
+
+# shellcheck source=.shell-lib.sh
+[ -f "${HOME}/.shell-lib.sh" ] && . "${HOME}/.shell-lib.sh"
 
 if [ "$(uname)" = "Linux" ] && [ -n "${DISPLAY:-}" ] ; then
     setxkbmap -layout us -option ctrl:nocaps
@@ -19,15 +27,15 @@ export SLACK_DEVELOPER_MENU=true
 #export EDITOR="emacs -nw" && export VISUAL=emacs
 command -v less > /dev/null 2>&1 && export PAGER=less
 
-if [ -d "${HOME}/.local/bin" ]; then
-  export PATH="${HOME}/.local/bin:${PATH}"
-fi
-if [ -d "${HOME}/taucmdr/bin" ]; then
-  export PATH="${HOME}/taucmdr/bin:${PATH}"
-fi
-if [ -d "${HOME}/fpm/bin" ]; then
-  export PATH="${HOME}/fpm/bin:${PATH}"
-fi
+path_prepend "${HOME}/.local/bin"
+path_prepend "${HOME}/taucmdr/bin"
+path_prepend "${HOME}/fpm/bin"
+
+# The following lines were added by Docker Desktop to add commands to your PATH.
+# (sentinel: marker lines kept verbatim so Docker Desktop leaves this file alone)
+path_append "${HOME}/.docker/bin"
+# End of Docker Desktop section.
+
 export CTEST_OUTPUT_ON_FAILURE=1
 
 # Homebrew: detect and set up paths (Apple Silicon or Intel)
@@ -113,7 +121,8 @@ fi
 
 unset _ssh_agent_env
 
-if [ "${SHELL##*/}" = "bash" ]; then
+# Test the running shell, not $SHELL: zsh -l inherits SHELL=/usr/local/bin/bash
+if [ -n "${BASH_VERSION:-}" ]; then
   # shellcheck source=.bashrc
   [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
 fi
@@ -121,8 +130,10 @@ fi
 # shellcheck disable=SC1091
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$PATH:/usr/local/go/bin"
+path_prepend "${HOME}/.cargo/bin"
+path_append /usr/local/go/bin
 
 # shellcheck disable=SC1091
-test -e "${HOME}/.iterm2_shell_integration.bash" && . "${HOME}/.iterm2_shell_integration.bash"
+if [ -n "${BASH_VERSION:-}" ]; then
+  test -e "${HOME}/.iterm2_shell_integration.bash" && . "${HOME}/.iterm2_shell_integration.bash"
+fi

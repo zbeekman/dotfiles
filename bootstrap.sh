@@ -136,7 +136,10 @@ echo "Finished."
 
 (
   cd ~ || exit 6
+  ln -s dotfiles/.shell-lib.sh
   ln -s dotfiles/.profile
+  ln -s dotfiles/.bash_profile
+  ln -s dotfiles/.zprofile
   ln -s dotfiles/.bashrc
   ln -s dotfiles/secrets/.secrets
   ln -s dotfiles/screen/.screenrc
