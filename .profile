@@ -24,7 +24,8 @@ fi
 export SLACK_DEVELOPER_MENU=true
 
 # Caveman skill: default compression mode for Claude Code
-export CAVEMAN_DEFAULT_MODE=ultra
+# (caveman 3.2+ levels: caveman | ultracave | megacave; only caveman keeps ASD-STE100)
+export CAVEMAN_DEFAULT_MODE=caveman
 
 # emacs --help > /dev/null 2>&1 && export EDITOR="emacs -nw" && export VISUAL=emacs
 #export EDITOR="emacs -nw" && export VISUAL=emacs
