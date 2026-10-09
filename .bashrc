@@ -388,6 +388,11 @@ if [[ $- == *i* ]] ; then
 
     # shellcheck disable=SC1091
     source_if_present ~/.fzf.bash
+
+    # direnv — auto-switch environment per directory
+    if command -v direnv > /dev/null 2>&1; then
+        eval "$(direnv hook bash)"
+    fi
 fi
 
 PATH="$(dedupe_path PATH)"
