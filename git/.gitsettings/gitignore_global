@@ -10,6 +10,12 @@ Icon
 # Thumbnails
 ._*
 
+# Claude Code scratch dir
+.tmp/
+
+# Microsoft Office lock / owner files (Word, Excel, PowerPoint)
+~$*
+
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
