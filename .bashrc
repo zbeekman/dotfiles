@@ -295,6 +295,9 @@ if [[ $- == *i* ]] ; then
     fi
 
     # Use Liquid Prompt
+    # Per-prompt `screen -ls` detached-session count. Can hang with a huge fd
+    # limit (see .profile ulimit note); set to 0 to disable.
+    export LP_ENABLE_DETACHED_SESSIONS=1
     if [[ ! "${PROMPT_COMMAND:-}" = *lp_set_prompt ]] ; then
 	# liquid prompt not yet enabled
 	if [[ -f "${HOME}/dotfiles/liquidprompt/liquidprompt" ]] ; then

@@ -84,6 +84,19 @@ export __TAUCMDR_PROGRESS_BARS__="disabled"
 # shellcheck disable=SC2317
 case "$-" in *i*) ;; *) return 0 2>/dev/null || exit 0;; esac
 
+# Cap the soft open-files limit. A huge inherited limit (e.g. after
+# `launchctl limit maxfiles 2147483646`) makes tools that close every fd on
+# startup (/usr/bin/screen, run by liquidprompt each prompt) spin forever,
+# hanging new shells. Only lowers; never raises.
+# shellcheck disable=SC3045  # ulimit -n works in bash/zsh/dash (all shells sourcing this)
+{
+_nofile="$(ulimit -S -n 2>/dev/null)"
+if [ "$_nofile" = unlimited ] || [ "${_nofile:-0}" -gt 65536 ] 2>/dev/null; then
+  ulimit -S -n 65536
+fi
+unset _nofile
+}
+
 # if type keychain > /dev/null 2>&1 ; then
 #     eval "$(keychain --agents "gpg,ssh" --eval)"
 #     export GPG_AGENT_PID="$(pgrep gpg-agent)"
