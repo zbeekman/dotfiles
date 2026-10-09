@@ -1,0 +1,40 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  bats:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # ssh submodule is private; only fetch the test tooling
+          submodules: false
+
+      - name: Fetch bats submodules
+        run: git submodule update --init tests/bats tests/test_helper/bats-support tests/test_helper/bats-assert
+
+      - name: Install shells and shellcheck (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh dash shellcheck
+
+      - name: Install bash and shellcheck (macOS)
+        if: runner.os == 'macOS'
+        run: brew install bash shellcheck
+
+      - name: Report interpreters
+        run: |
+          for sh in sh dash bash zsh /opt/homebrew/bin/bash /usr/local/bin/bash; do
+            command -v "$sh" >/dev/null 2>&1 && "$sh" -c 'echo "$0: ${BASH_VERSION:-${ZSH_VERSION:-posix}}"' "$sh" || true
+          done
+
+      - name: Run tests
+        run: tests/bats/bin/bats --print-output-on-failure --timing tests
