@@ -23,6 +23,9 @@ fi
 # Turn off the damn wysiwyg slack editor
 export SLACK_DEVELOPER_MENU=true
 
+# Caveman skill: default compression mode for Claude Code
+export CAVEMAN_DEFAULT_MODE=ultra
+
 # emacs --help > /dev/null 2>&1 && export EDITOR="emacs -nw" && export VISUAL=emacs
 #export EDITOR="emacs -nw" && export VISUAL=emacs
 command -v less > /dev/null 2>&1 && export PAGER=less
