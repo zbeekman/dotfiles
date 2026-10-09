@@ -329,6 +329,9 @@ if [[ $- == *i* ]] ; then
     export HOMEBREW_NO_INSECURE_REDIRECT=1
     export HOMEBREW_CURL_RETRIES=4
     export HOMEBREW_BAT=1
+    export HOMEBREW_TIMED_LLM_ESTIMATES=1
+    export HOMEBREW_TIMED_LLM_API_KEY_FILE="${HOME}/.secrets/anthropic-api-key"
+    export HOMEBREW_TIMED_LLM_MODEL=claude-opus-5-5
 
     export BAT_THEME=zenburn
 
