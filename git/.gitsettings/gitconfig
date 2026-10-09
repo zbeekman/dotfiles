@@ -3,8 +3,6 @@
 	email = zbeekman@gmail.com
 	signingkey = A94489D938CB936668F90911A93CE70D8021BD0F
 	logallrefupdates = true
-[credential]
-	helper = store
 [core]
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
@@ -179,3 +177,5 @@
 
 [blame]
 	ignoreRevsFile = .git-blame-ignore-revs
+[credential]
+	helper = osxkeychain
