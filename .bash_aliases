@@ -7,7 +7,6 @@
 
 if command -v less >/dev/null 2>&1 ; then
     alias more='less'
-    alias less='less -i -F -X -M -N -J'
 fi
 if command -v emacs >/dev/null 2>&1 ; then
     alias qemacs="emacs -nw -Q"

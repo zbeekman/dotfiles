@@ -69,7 +69,7 @@ export LESS_TERMCAP_us=$'\e[01;34m'   # Constants
 export LESS_TERMCAP_ue=$'\e[0m'       # Constants End
 }
 
-export LESS=" -i -R -J "
+export LESS="-i -R -F -X -M -W"
 
 if [ -n "${PKG_CONFIG_PATH}" ]; then
   export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
