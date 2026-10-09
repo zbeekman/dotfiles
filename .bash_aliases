@@ -16,3 +16,6 @@ fi
 
 [[ -d "${HOME}/Sandbox" ]] && alias s="cd ~/Sandbox" || true
 
+if command -v claude >/dev/null 2>&1 ; then
+    alias claude-plugin-update-all='claude plugin list | grep -o "[a-z][-a-z]*@[-a-z]*" | xargs -I{} claude plugin update {}'
+fi
