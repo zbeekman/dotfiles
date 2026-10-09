@@ -310,6 +310,7 @@ if [[ $- == *i* ]] ; then
     # Get tokens if they exist
     if [[ -d "${HOME}/.secrets/tokens" ]]; then
 	for token in "${HOME}"/.secrets/tokens/* ; do
+	    [[ "$token" == *~ ]] && continue
 	    # shellcheck disable=SC1090
 	    source_if_present "$token"
 	done
