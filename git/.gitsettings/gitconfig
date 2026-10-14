@@ -179,3 +179,15 @@
 	ignoreRevsFile = .git-blame-ignore-revs
 [credential]
 	helper = osxkeychain
+
+# Use the ParaTools email for ParaToolsInc and UO repositories.
+[includeIf "hasconfig:remote.*.url:git@github.com:ParaToolsInc/**"]
+    path = ~/.gitsettings/gitconfig-paratools
+[includeIf "hasconfig:remote.*.url:https://github.com/ParaToolsInc/**"]
+    path = ~/.gitsettings/gitconfig-paratools
+[includeIf "hasconfig:remote.*.url:*@git.nic.uoregon.edu:/**"]
+    path = ~/.gitsettings/gitconfig-paratools
+[includeIf "hasconfig:remote.*.url:git@github.com:UO-OACISS/**"]
+    path = ~/.gitsettings/gitconfig-paratools
+[includeIf "hasconfig:remote.*.url:https://github.com/UO-OACISS/**"]
+    path = ~/.gitsettings/gitconfig-paratools
